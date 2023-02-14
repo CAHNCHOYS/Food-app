@@ -6,9 +6,10 @@
     </router-link>
     <ul class="sidebar-menu__list">
       <li v-for="link in menuLinks" :key="link.category">
-        <router-link :to="`/Categories/${link.category}`" class="sidebar-menu__link" :class="[link.icon]">{{
-          link.text
-        }}</router-link>
+        <router-link :to="`/Categories/${link.category}`" class="sidebar-menu__link"
+          :class="[link.icon, $route.query.searchProduct ? 'notAct' : '']">{{
+  link.text
+          }}</router-link>
       </li>
 
     </ul>
@@ -167,13 +168,17 @@ const menuLinks = ref([
       }
     }
 
-    &.router-link-exact-active {
-      color: #ff9846;
-
-      &::before {
+    &:not(.notAct) {
+      &.router-link-exact-active {
         color: #ff9846;
+
+        &::before {
+          color: #ff9846;
+        }
       }
     }
+
+
   }
 }
 </style>

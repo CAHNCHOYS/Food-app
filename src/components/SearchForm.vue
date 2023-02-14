@@ -109,7 +109,7 @@ import { useRoute, useRouter } from 'vue-router';
 const emit = defineEmits(['closeForm']);
 
 const router = useRouter();
-
+const route = useRoute();
 
 
 
@@ -131,7 +131,7 @@ const formSubmit = (values) => {
 
     router.push({
         name: 'category-page', params: {
-            category: "Поиск по товарам",
+            category:  route.params.category || "Поиск по товарам",
         }, query: {
             searchProduct: values.search,
             searchCategories: values.categories.join(','),
@@ -193,8 +193,9 @@ const formSubmit = (values) => {
         margin: rem(5) 0px 0px 0px;
         font-weight: 500;
         color: rgb(243, 95, 124);
-        @media(max-width: #{$mobile+px}){
-           color: yellow;      
+
+        @media(max-width: #{$mobile+px}) {
+            color: yellow;
         }
 
     }
@@ -276,7 +277,7 @@ const formSubmit = (values) => {
             visibility: hidden;
 
             display: block;
-            
+
             background-color: coral;
 
         }

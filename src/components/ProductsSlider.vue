@@ -21,6 +21,8 @@
       </swiper>
     </div>
     <p v-else-if="!productType">Нет рекомендуемых товаров для данного (</p>
+    
+
 
     <LoadingGif :bg-color="'gray'" v-if="isLoading"> </LoadingGif>
 

@@ -10,7 +10,7 @@
             <div class="category-products__header">
                 <div class="category-products__title-col">
                     <div class="category-products__title" :class="[currentCategoryIcon]">
-                        {{ category }}
+                        {{ $route.query.searchProduct ? "Поиск по товарам" : category }}
                     </div>
                 </div>
                 <div class="category-products__sort-field">

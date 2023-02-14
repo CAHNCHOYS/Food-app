@@ -25,28 +25,36 @@ export const useCategoryProductsFetch = (props, route) => {
   // Получаем товары по категория
   watch(
     [
+     
       () => props.category,
       () => route.query.searchCategories,
       () => route.query.searchProduct,
+     
     ],
     async () => {
       isLoading.value = true;
       categoryProducts.value = [];
-      currentCategoryIcon.value = categoryIcons[props.category];
+
+
+
+      
+      
       let products;
       console.log(props.category);
       //Если пришли с формы поиска
-      if (
-        route.query.searchCategories &&
-        props.category === "Поиск по товарам"
-      ) {
+      if (route.query.searchCategories || route.query.searchProduct) {
         products = await fetchData(
           `/api/searchProduct/${route.query.searchCategories}/${route.query.searchProduct}`
         );
+        currentCategoryIcon.value = categoryIcons["Поиск по товарам"];
+        
         //Если пришли с меню категорий
       } else {
         products = await fetchData(`/api/categories/${props.category}/999`);
+        currentCategoryIcon.value = categoryIcons[props.category];
       }
+
+      console.log(products);
 
       if (products.length) {
         categoryProducts.value = products;
