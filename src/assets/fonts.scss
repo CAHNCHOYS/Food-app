@@ -1,0 +1,158 @@
+@font-face {
+  font-family: "icons";
+  src: url("@/fonts/icons.eot?3fpylb");
+  src: url("@/fonts/icons.eot?3fpylb#iefix") format("embedded-opentype"),
+    url("@/fonts/icons.ttf?3fpylb") format("truetype"),
+    url("@/fonts/icons.woff?3fpylb") format("woff"),
+    url("@/fonts/icons.svg?3fpylb#icons") format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Conv_dinpro";
+  src: url("@/fonts/dinpro.eot");
+  src: local("☺"), url("@/fonts/dinpro.woff") format("woff"),
+    url("@/fonts/dinpro.ttf") format("truetype"),
+    url("@/fonts/dinpro.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Conv_dinpro";
+  src: url("@/fonts/dinpro_bold.eot");
+  src: local("☺"), url("@/fonts/dinpro_bold.woff") format("woff"),
+    url("@/fonts/dinpro_bold.ttf") format("truetype"),
+    url("@/fonts/dinpro_bold.svg") format("svg");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Conv_dinpro";
+  src: url("@/fonts/dinpro_light.eot");
+  src: local("☺"), url("@/fonts/dinpro_light.woff") format("woff"),
+    url("@/fonts/dinpro_light.ttf") format("truetype"),
+    url("@/fonts/dinpro_light.svg") format("svg");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Conv_dinpro";
+  src: url("@/fonts/dinpro_medium.eot");
+  src: local("☺"), url("@/fonts/dinpro_medium.woff") format("woff"),
+    url("@/fonts/dinpro_medium.ttf") format("truetype"),
+    url("@/fonts/dinpro_medium.svg") format("svg");
+  font-weight: 500;
+  font-style: normal;
+}
+
+
+@font-face {
+	font-family: 'NexaLight';
+	src: url('@/fonts/nexalight.eot'); /* IE 9 Compatibility Mode */
+	src: url('@/fonts/nexalight.eot?#iefix') format('embedded-opentype'), /* IE < 9 */
+		url('@/fonts/nexalight.woff2') format('woff2'), /* Super Modern Browsers */
+		url('@/fonts/nexalight.woff') format('woff'), /* Firefox >= 3.6, any other modern browser */
+		url('@/fonts/nexalight.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('@/fonts/nexalight.svg#nexalight') format('svg'); /* Chrome < 4, Legacy iOS */
+}
+
+
+
+
+
+[class^="icon-"]::before,
+[class*=" icon-"]::before {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: "icons" !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.icon-Soup:before {
+  content: "\e916";
+}
+.icon-Wok:before {
+  content: "\e915";
+}
+.icon-pizza:before {
+  content: "\e914";
+}
+.icon-arrow-down:before {
+  content: "\e900";
+  color: black;
+}
+.icon-clock:before {
+  content: "\e901";
+}
+.icon-cart:before {
+  content: "\e902";
+  color: #ff9846;
+}
+.icon-like:before {
+  content: "\e903";
+  color: #ff9846;
+}
+.icon-fish:before {
+  content: "\e904";
+  color: #ff9846;
+}
+.icon-Frame-11:before {
+  content: "\e905";
+}
+.icon-credit-cart:before {
+  content: "\e906";
+}
+.icon-plus:before {
+  content: "\e907";
+}
+.icon-location:before {
+  content: "\e908";
+}
+.icon-shop-cart:before {
+  content: "\e909";
+}
+.icon-search:before {
+  content: "\e90a";
+}
+.icon-arrow-left:before {
+  content: "\e90b";
+}
+.icon-arrow-right:before {
+  content: "\e90c";
+}
+.icon-Actions:before {
+  content: "\e90d";
+}
+.icon-drinks2:before {
+  content: "\e90e";
+}
+.icon-sets:before {
+  content: "\e90f";
+}
+.icon-Corn:before {
+  content: "\e910";
+}
+.icon-Salad:before {
+  content: "\e911";
+}
+.icon-sushi:before {
+  content: "\e912";
+}
+.icon-Rolli:before {
+  content: "\e913";
+}
