@@ -22,6 +22,17 @@ export const useCategoryProductsFetch = (props, route) => {
     "Поиск по товарам": "icon-search",
   };
 
+
+
+
+
+
+
+
+
+
+
+
   // Получаем товары по категория
   watch(
     [
@@ -35,12 +46,15 @@ export const useCategoryProductsFetch = (props, route) => {
       isLoading.value = true;
       categoryProducts.value = [];
 
-
-
       
       
-      let products;
+
       console.log(props.category);
+
+      
+      
+      let products = [];
+
       //Если пришли с формы поиска
       if (route.query.searchCategories || route.query.searchProduct) {
         products = await fetchData(
@@ -54,7 +68,7 @@ export const useCategoryProductsFetch = (props, route) => {
         currentCategoryIcon.value = categoryIcons[props.category];
       }
 
-      console.log(products);
+  
 
       if (products.length) {
         categoryProducts.value = products;

@@ -131,7 +131,7 @@ const formSubmit = (values) => {
 
     router.push({
         name: 'category-page', params: {
-            category:  route.params.category || "Поиск по товарам",
+            category:  "Поиск по товарам",
         }, query: {
             searchProduct: values.search,
             searchCategories: values.categories.join(','),

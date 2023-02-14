@@ -14,7 +14,7 @@ export const useLayouts = (route) => {
 
   
   const getLayout = computed(() => {
-    console.log("CHANGING" + route.meta.layout);
+ 
     return layouts[route.meta.layout || "Main"];
   });
 

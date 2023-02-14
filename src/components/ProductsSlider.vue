@@ -124,7 +124,10 @@ onMounted(async () => {
   if (!props.recommendedProducts && props.productType) {
 
     let getProducts = await fetchData(`/api/productsByType/${props.productType}`)
+   
 
+
+    console.log(getProducts);
 
     if (getProducts.length) {
       productsByType.value = getProducts;

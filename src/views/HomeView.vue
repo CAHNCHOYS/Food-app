@@ -102,15 +102,22 @@
       </div>
       <div class="tabs-homepage__all-tabs">
         <Transition name="slider">
-          <div class="tabs-homepage__tab" v-show="currentOpenTab === 1">
-            <ProductsSlider product-type="isNew" v-cloak></ProductsSlider>
-          </div>
+          <KeepAlive>
+            <div class="tabs-homepage__tab" v-show="currentOpenTab === 1">
+              <ProductsSlider product-type="isNew" v-cloak></ProductsSlider>
+            </div>
+          </KeepAlive>
+
         </Transition>
 
         <Transition name="slider">
-          <div class="tabs-homepage__tab" v-show="currentOpenTab === 2">
-            <ProductsSlider product-type="isSale" v-cloak></ProductsSlider>
-          </div>
+          <KeepAlive>
+            <div class="tabs-homepage__tab" v-show="currentOpenTab === 2">
+              <ProductsSlider product-type="isSale" v-cloak></ProductsSlider>
+            </div>
+          </KeepAlive>
+
+
         </Transition>
 
       </div>
@@ -653,22 +660,22 @@ const mainSliderSettings = {
 
 
 .slider-enter-from {
-   transform: translate(-50%, 0); 
-   opacity: 0;
-  
+  transform: translate(-30%, 0);
+  opacity: 0;
+
 }
 
 .slider-enter-to {
   transform: translate(0);
   opacity: 1;
- 
+
 }
 
 
 
 .slider-leave-to {
   display: none;
-  transform: translate(50%, 0);
+  transform: translate(30%, 0);
   opacity: 0;
 }
 </style>
