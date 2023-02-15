@@ -68,7 +68,7 @@ const swiperSettings = {
     0: {
       slidesPerView: 1,
     },
-    450: {
+    420: {
       spaceBetween: 15,
       slidesPerView: 2,
     },
@@ -99,7 +99,7 @@ const swiperSettingsCirle = {
       slidesPerView: 1,
       spaceBetween: 0,
     },
-    450: {
+    420: {
       spaceBetween: 30,
       slidesPerView: 2,
     },

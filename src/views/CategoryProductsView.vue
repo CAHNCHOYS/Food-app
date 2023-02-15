@@ -199,11 +199,11 @@ watch(currentPage, () => {
         }
 
         @media(max-width: #{$mobile+px}) {
-            font-size: rem(24);
+            font-size: rem(28);
 
             &::before {
 
-                font-size: rem(20);
+                font-size: rem(24);
 
             }
         }

@@ -213,10 +213,14 @@ const decrementCount = () => {
         row-gap: rem(10);
     }
 
+
+
+
+    
     // .cart-product__count
 
     &__count {
-        flex: 0 0 90px;
+        flex: 0 0 rem(90);
     }
 
     // .cart-product__total-price

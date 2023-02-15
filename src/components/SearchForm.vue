@@ -311,15 +311,7 @@ const formSubmit = (values) => {
             }
         }
 
-        @media(max-width: #{$mobile+px}) {
-            background-color: coral;
-
-            @media (any-hover:hover) {
-                &:hover {
-                    background-color: rgb(250, 89, 30);
-                }
-            }
-        }
+      
     }
 }
 </style>

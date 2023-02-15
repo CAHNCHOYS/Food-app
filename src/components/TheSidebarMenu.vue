@@ -85,7 +85,7 @@ const menuLinks = ref([
 
     img {
       max-width: 100%;
-      height: 120px;
+      height: 110px;
       display: inline-block;
       margin: 0px 0px 5px 0px;
     }

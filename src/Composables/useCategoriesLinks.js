@@ -53,7 +53,7 @@ export const useCategories = () => {
     {
       categoryText: "Напитки",
       picture:
-        "https://sushi-backend-henna.vercel.app/CategoriesPreview/Drinks.jpg",
+        "https://sushi-backend-henna.vercel.app/CategoriesPreview/Drinks.png",
 
       categoryLink: "Напитки",
     },

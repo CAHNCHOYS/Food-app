@@ -29,7 +29,7 @@
                      class="header__link">Отзывы</router-link>
                </li>
 
-               <li v-if="!userAuthStore.checkIfUserLogged">
+               <li @click="removeMobileMenu" v-if="!userAuthStore.checkIfUserLogged">
                   <router-link :to="{ name: 'login' }" class="header__link">Войти</router-link>
                </li>
 
@@ -39,7 +39,7 @@
                </li>
 
                <li>
-                  <router-link :to="{ name: 'register' }" class="header__link">Регистрация</router-link>
+                  <router-link  @click="removeMobileMenu" :to="{ name: 'register' }" class="header__link">Регистрация</router-link>
                </li>
                <li v-if="windowStore.getSize <= 767">
                   <router-link @click="removeMobileMenu" :to="{ name: 'cart-page' }" class="header__cart">
@@ -317,7 +317,7 @@ onMounted(() => {
       background-color: rgba($color: #000000, $alpha: 0.75);
 
       @media(max-width: #{$mobile+px}) {
-         background-color: cornflowerblue;
+         background-color: rgba($color: #111, $alpha: 1);
       }
 
 

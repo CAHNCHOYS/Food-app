@@ -166,4 +166,6 @@ const windowStore = useWindowSizeStore();
 
    }
 }
+
+
 </style>

@@ -54,7 +54,7 @@
          <div class="footer__info-author">
          
             <div class="footer__git">
-               <a href="">GitHub</a>
+               <a href="https://github.com/CAHNCHOYS/Food-app">GitHub</a>
             </div>
 
          </div>
@@ -244,6 +244,7 @@ const windowSizeStore = useWindowSizeStore();
 
    &__info-author {
       text-align: center;
+      padding: 5px 0px 5px 0px;
    }
 
    // .footer__author

@@ -2,8 +2,8 @@
    <div class="site-info">
       <div class="site-info__title">Наш телефон</div>
       <div class="site-info__mobile-phones">
-         <p><a href="tel:+79493528425" class="site-info__mobile-phone">+7949 352 84 25</a></p>
-         <p><a href="tel:+79493816596" class="site-info__mobile-phone">+7949 381 65 96</a></p>
+         <p><a href="tel:+79493528425" class="site-info__mobile-phone">+7949 777 88 99</a></p>
+         <p><a href="tel:+79493816596" class="site-info__mobile-phone">+7949 999 88 77</a></p>
       </div>
       <div class="site-info__work-time">
          <p class="icon-clock">работаем с 10:00 до 00:00</p>
