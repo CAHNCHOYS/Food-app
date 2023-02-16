@@ -15,7 +15,7 @@ export const useCategoryProductsFetch = (props, route) => {
     Сеты: "icon-sets",
     Суши: "icon-sushi",
     Роллы: "icon-Rolli",
-    Вок: "icon-Wok",
+    Wok: "icon-Wok",
     Супы: "icon-Soup",
     Напитки: "icon-drinks2",
     Салаты: "icon-Salad",
