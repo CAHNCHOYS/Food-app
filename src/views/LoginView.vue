@@ -99,7 +99,7 @@ import { useFormSchemas } from "../Composables/useFormSchemas";
 import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
 import { configure } from "vee-validate";
 
-import { ref, watchEffect, watch } from "vue";
+import { ref,  watch } from "vue";
 import { useUserAuthStore } from '../stores/userAuth.js';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserCartStore } from "../stores/userCart";
@@ -166,7 +166,6 @@ const submitForm = async (values) => {
 
    let login = await fetchData("/api/login", {
       method: "POST",
-
       headers: {
          "Content-type": "application/json",
       },

@@ -2,7 +2,6 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useUserAuthStore } from "./userAuth.js";
 
-
 import { fetchData } from "../api/fetchData.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
@@ -10,20 +9,20 @@ export const useUserCartStore = defineStore("userCart", () => {
   const cartItems = ref([]);
 
   const isFetchingLoading = ref(false);
-  
+
   const isCartProductsErr = ref(false);
 
   const loadErrorMessage = ref("Произошла ошибка при загрузке товаров корзины");
 
   const isPromoActive = ref(false);
-  const updateUserPromo = (promo) => {
+  function updateUserPromo(promo) {
     if (promo === "zZz" || promo === "yYy" || promo === "aAa") {
       isPromoActive.value = true;
     }
-  };
+  }
 
   //Proudct actions --------------------------------------------------
-  const fetchUserCartProducts = async () => {
+  async function fetchUserCartProducts() {
     if (userAuthStore.currentUser.id) {
       cartItems.value = [];
       isFetchingLoading.value = true;
@@ -44,9 +43,9 @@ export const useUserCartStore = defineStore("userCart", () => {
 
       isFetchingLoading.value = false;
     }
-  };
+  }
 
-  const commitOrder = async () => {
+  async function commitOrder() {
     try {
       const requests = cartItems.value.map((product) =>
         fetch("https://sushi-backend-henna.vercel.app/api/order", {
@@ -72,10 +71,9 @@ export const useUserCartStore = defineStore("userCart", () => {
       console.log(err);
       return { err };
     }
-  };
+  }
 
-  const addProductToCart = async (product) => {
-   
+  async function addProductToCart(product) {
     if (userAuthStore.checkIfUserLogged) {
       if (!product.count) {
         product.count = 1;
@@ -98,9 +96,9 @@ export const useUserCartStore = defineStore("userCart", () => {
       return {
         isUserNotLogged: true,
       };
-  };
+  }
 
-  const updateUserCart = (product, method = "remove") => {
+  function updateUserCart(product, method = "remove") {
     if (method.toLowerCase() === "add") {
       cartItems.value.push(product);
     }
@@ -109,16 +107,9 @@ export const useUserCartStore = defineStore("userCart", () => {
         (item) => item.product_id != product.product_id
       );
     }
-  };
+  }
 
-  const getAllProductsPrice = computed(() => {
-    return cartItems.value.reduce(
-      (start, item) => start + item.Price * item.count,
-      0
-    );
-  });
-
-  const deleteProductFromCart = async (product) => {
+  async function deleteProductFromCart(product) {
     const deleteProductFetch = await fetchData(`/api/cartProducts`, {
       method: "DELETE",
       headers: {
@@ -131,7 +122,14 @@ export const useUserCartStore = defineStore("userCart", () => {
     });
 
     return deleteProductFetch;
-  };
+  }
+
+  const getAllProductsPrice = computed(() => {
+    return cartItems.value.reduce(
+      (start, item) => start + item.Price * item.count,
+      0
+    );
+  });
 
   /*------------------------------------------------------------------------------------------------------------------------------------------------------*/
   return {

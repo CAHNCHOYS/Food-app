@@ -2,29 +2,27 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { fetchData } from "../api/fetchData.js";
 
-
-
 export const useUserAuthStore = defineStore("userAuth", () => {
   const currentUser = ref(null);
   const isUserLoggedIn = ref(false);
   const checkIfUserLogged = computed(() => isUserLoggedIn.value);
 
-  const addUserToStorage = ({ token, user }) => {
+  function addUserToStorage({ token, user }) {
     console.log("tokenn", token);
     console.log("user", user);
     currentUser.value = user;
     localStorage.setItem("token", JSON.stringify(token));
 
     isUserLoggedIn.value = true;
-  };
+  }
 
-  const logOutUser = () => {
+  function logOutUser() {
     isUserLoggedIn.value = false;
     localStorage.removeItem("token");
     currentUser.value = null;
-  };
+  }
 
-  const verifyTokenStore = async () => {
+  async function verifyTokenStore() {
     if (localStorage.getItem("token")) {
       const token = JSON.parse(localStorage.getItem("token"));
       console.log(token);
@@ -48,10 +46,10 @@ export const useUserAuthStore = defineStore("userAuth", () => {
         logOutUser();
       }
     }
-  };
+  }
 
   //Обновление данных в личном кабинете
-  const updateUserInfo = async (userData) => {
+  async function updateUserInfo(userData) {
     userData.id = currentUser.value.id;
 
     let userUpdate = await fetchData(`/api/users`, {
@@ -94,14 +92,16 @@ export const useUserAuthStore = defineStore("userAuth", () => {
         return { done: false };
       }
     }
-  };
+  }
 
   return {
     addUserToStorage,
     verifyTokenStore,
-    checkIfUserLogged,
-    currentUser,
+
     logOutUser,
     updateUserInfo,
+
+    checkIfUserLogged,
+    currentUser,
   };
 });

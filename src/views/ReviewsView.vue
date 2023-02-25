@@ -3,42 +3,49 @@
     <LoadingGif v-if="isFetchingLoading"></LoadingGif>
     <div class="reviews__body" v-else>
       <Transition name="review">
-        <div class="reviews__message reviews__message_added" v-show="isReviewAdded">
+        <div
+          class="reviews__message reviews__message_added"
+          v-show="isReviewAdded"
+        >
           Отзыв добавлен!
         </div>
       </Transition>
 
-
       <Transition name="review">
-        <div class="reviews__message reviews__message_not-logged" v-show="isUserLogged">
+        <div
+          class="reviews__message reviews__message_not-logged"
+          v-show="isUserLogged"
+        >
           Для добавления отзыва требуется войти в аккаунт!
         </div>
       </Transition>
 
-
-
-
       <div class="reviews__header" v-if="!isError">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
-          <button class="reviews__add-button" :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
-            @click="isFormToggled = !isFormToggled">
+          <button
+            class="reviews__add-button"
+            :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
+            @click="isFormToggled = !isFormToggled"
+          >
             Добавить отзыв
           </button>
         </div>
       </div>
 
-
-
-
-
-
-
       <slide-up-down v-model="isFormToggled" :duration="500">
         <div class="reviews__add-form review-form">
-          <LoadingGif class="reviews__loading-form" v-if="isAddingLoading"></LoadingGif>
-          <vForm @invalid-submit="invalidFormSubmit" @submit="submitForm" class="review-form__form"
-            :validation-schema="formSchema" :class="{ opacity: isAddingLoading }">
+          <LoadingGif
+            class="reviews__loading-form"
+            v-if="isAddingLoading"
+          ></LoadingGif>
+          <vForm
+            @invalid-submit="invalidFormSubmit"
+            @submit="submitForm"
+            class="review-form__form"
+            :validation-schema="formSchema"
+            :class="{ opacity: isAddingLoading }"
+          >
             <div class="review-form__elements">
               <div class="review-form__element">
                 <div class="review-form__element-title">Ваше сообщение</div>
@@ -46,11 +53,18 @@
                   <vField as="textarea" name="message" placeholder="Сообщение">
                   </vField>
                 </div>
-                <FormError class="review-form__error-msg" name="message"></FormError>
+                <FormError
+                  class="review-form__error-msg"
+                  name="message"
+                ></FormError>
               </div>
 
               <div class="review-form__submit">
-                <button type="submit" :class="{ err: isInvalidSubmit }" :disabled="isInvalidSubmit">
+                <button
+                  type="submit"
+                  :class="{ err: isInvalidSubmit }"
+                  :disabled="isInvalidSubmit"
+                >
                   Отправить отзыв
                 </button>
               </div>
@@ -59,40 +73,33 @@
         </div>
       </slide-up-down>
 
+      <VErrorMessage
+        v-if="isAddError"
+        :err-message="addErrorMessage"
+        style="margin-bottom: 20px"
+      ></VErrorMessage>
 
-
-
-      <VErrorMessage v-if="isAddError" :err-message="addErrorMessage" style="margin-bottom: 20px;"></VErrorMessage>
-
-
-          
       <VErrorMessage :err-message="errorMessage" v-if="isError"></VErrorMessage>
-      <div class="reviews__no-reviews" v-if="!isError && !reviews.length">
+
+      <div class="reviews__reviews" v-if="reviews.length">
+        <div class="reviews__all-reviews">
+          <ReviewItem
+            v-for="review in reviews"
+            :key="review.review_id"
+            :review="review"
+          >
+          </ReviewItem>
+        </div>
+      </div>
+
+      <div class="reviews__no-reviews" v-else-if="!isError && !reviews.length">
         Пока что отзывов нет, станьте первым!
       </div>
-
-  
-      <div class="reviews__reviews" v-if="reviews.length">
-
-        <div class="reviews__all-reviews">
-
-          <ReviewItem v-for="review in reviews" :key="review.review_id" :review="review">
-          </ReviewItem>
-
-
-        </div>
-
-      </div>
-
-
-
-
     </div>
   </div>
 </template>
 
 <script setup>
-
 import {
   Form as vForm,
   Field as vField,
@@ -101,13 +108,9 @@ import {
 import * as yup from "yup";
 import { configure } from "vee-validate";
 
-
 import ReviewItem from "../components/ReviewItem.vue";
-import {  ref } from "vue";
+import { ref } from "vue";
 import { useReviewsActions } from "../Composables/useReviewsActions.js";
-
-
-
 
 // Default values
 configure({
@@ -116,8 +119,6 @@ configure({
   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
   validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
-
-
 
 const {
   isError,
@@ -130,7 +131,6 @@ const {
   errorMessage,
   addErrorMessage,
   addReviewItem,
-  
 } = useReviewsActions();
 
 //Работа с формой --------------------------------------------------------------------------------------------------------
@@ -142,13 +142,8 @@ const formSchema = yup.object({
     .required("Поле обязательное для ввода!"),
 });
 
-
 const isFormToggled = ref(false);
 const isInvalidSubmit = ref(false);
-
-
-
-
 
 const submitForm = async (values, { resetForm }) => {
   let currentDate = new Date().toLocaleString();
@@ -156,24 +151,15 @@ const submitForm = async (values, { resetForm }) => {
   resetForm();
 };
 
-
-
-
 const invalidFormSubmit = () => {
   isInvalidSubmit.value = true;
   setTimeout(() => (isInvalidSubmit.value = false), 500);
 };
 //-------------------------------------------------------------------------------------------------------------------------
-
-
-
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/adaptive-value.scss";
-
-
-
 
 .reviews {
   // .reviews__body
@@ -232,7 +218,8 @@ const invalidFormSubmit = () => {
 
   // .reviews__button
 
-  &__button {}
+  &__button {
+  }
 
   // .reviews__add-button
 
@@ -286,10 +273,7 @@ const invalidFormSubmit = () => {
   &__add-form {
     margin: 0px 0px rem(28) 0px;
     position: relative;
-
   }
-
-
 
   // .reviews__loading-form
 
@@ -312,12 +296,11 @@ const invalidFormSubmit = () => {
 
   // .reviews__no-reviews
 
-  &__no-reviews {}
+  &__no-reviews {
+  }
 }
 
 .review-form {
-
-
   // .review-form__form
   &__form {
     &.opacity {
@@ -335,7 +318,8 @@ const invalidFormSubmit = () => {
 
   // .review-form__element
 
-  &__element {}
+  &__element {
+  }
 
   // .review-form__element-title
 
@@ -422,9 +406,6 @@ const invalidFormSubmit = () => {
   transform: translate(0, 100%);
   opacity: 0;
 }
-
-
-
 
 .list-leave-active,
 .list-enter-active {

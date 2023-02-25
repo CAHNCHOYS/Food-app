@@ -4,6 +4,8 @@ export const useCategoiresFilter = (
   categoriesProducts,
   { currentPage, prices }
 ) => {
+
+  
   const productsByPage = ref(9);
   const moneySliderSettings = ref({
     min: 1,
