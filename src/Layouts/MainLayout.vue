@@ -97,9 +97,7 @@ const windowStore = useWindowSizeStore();
       flex: 0 0 360px;
     }
 
-    @media (max-width: #{$container+px}) {
-      display: none;
-    }
+  
   }
 
   // .main__menu-wrapper

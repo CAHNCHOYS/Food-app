@@ -18,8 +18,8 @@
                                     <div class="checkout-form__tabs form-tab">
                                         <ul class="form-tab__tab-menu">
                                             <li v-for="tab in paymentsTypeTabs">
-                                                <span @click="currentPaymentTab = tab.tabNumber"
-                                                    class="form-tab__button" :class="[
+                                                <span @click="currentPaymentTab = tab.tabNumber" class="form-tab__button"
+                                                    :class="[
                                                         tab.icon,
                                                         tab.tabNumber === currentPaymentTab ? 'active' : '',
                                                     ]">{{ tab.text }}</span>
@@ -102,10 +102,9 @@
                             <div class="checkout-form__tabs form-tab">
                                 <ul class="form-tab__tab-menu">
                                     <li v-for="tab in MethodsTabs">
-                                        <span @click="currentMethodType = tab.tabNumber" class="form-tab__button"
-                                            :class="[
-                                                tab.tabNumber === currentMethodType ? 'active' : '',
-                                            ]">{{ tab.text }}</span>
+                                        <span @click="currentMethodType = tab.tabNumber" class="form-tab__button" :class="[
+                                            tab.tabNumber === currentMethodType ? 'active' : '',
+                                        ]">{{ tab.text }}</span>
                                     </li>
                                 </ul>
 
@@ -226,18 +225,16 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
 import { computed } from "@vue/reactivity";
+
 import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
 import { configure } from "vee-validate";
-
-import { ref } from "vue";
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useUserCartStore } from '../stores/userCart';
 import { useWindowSizeStore } from "../stores/windowSize";
 import CheckoutDetails from '../components/UserCart/CheckoutDetails.vue';
-
-
 
 const userCartStore = useUserCartStore();
 const windowSizeStore = useWindowSizeStore();
@@ -343,9 +340,6 @@ const commitOrder = async (values) => {
     isFormSubmitting.value = false;
 };
 
-
-
-
 const invalidSubmit = ({ values, errors, results }) => {
     console.log(values); // current form values
     console.log(errors); // a map of field names and their first error message
@@ -353,8 +347,6 @@ const invalidSubmit = ({ values, errors, results }) => {
     isInvalidSubmit.value = true;
     setTimeout(() => isInvalidSubmit.value = false, 500);
 }
-
-
 
 
 </script>

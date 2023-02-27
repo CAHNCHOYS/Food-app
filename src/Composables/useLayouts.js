@@ -10,18 +10,9 @@ export const useLayouts = (route) => {
     Checkout: CheckoutLayout,
   };
 
-
-
-  
   const getLayout = computed(() => {
- 
     return layouts[route.meta.layout || "Main"];
   });
-
-
-
-
-  
 
   return { getLayout };
 };

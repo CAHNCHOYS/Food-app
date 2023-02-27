@@ -81,10 +81,10 @@
             :disabled="isActionLoading || isNotLoggedUser"
             @click="
               addProductAction({
-                name: props.product.name,
-                product_id: props.product.product_id,
-                image: props.product.image,
-                Price: props.product.Price,
+                name: product.name,
+                product_id: product.product_id,
+                image: product.image,
+                Price: product.Price,
               })
             "
           >
@@ -97,10 +97,10 @@
           class="single-product__add-btn icon-plus"
           @click="
             addProductAction({
-              name: props.product.name,
-              product_id: props.product.product_id,
-              image: props.product.image,
-              Price: props.product.Price,
+              name: product.name,
+              product_id: product.product_id,
+              image: product.image,
+              Price: product.Price,
             })
           "
         ></button>

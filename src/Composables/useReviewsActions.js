@@ -10,20 +10,19 @@ export const useReviewsActions = () => {
 
   const isFetchingLoading = ref(false);
   const isError = ref(false); //Ошибка если не получилось получить отзывы с базы данных
-  const isUserLogged = ref(false);
+  const isUserNotLogged = ref(false);
   const isReviewAdded = ref(false);
   const isAddError = ref(false);
-  const isAddingLoading = ref(false);
+  const isReviewAdding = ref(false);
 
   const errorMessage = ref("Произошла ошибка");
   const addErrorMessage = ref("Произошла ошибка");
 
   const addReviewItem = async (review) => {
-    isAddingLoading.value = true;
+    isReviewAdding.value = true;
     if (userAuthStore.checkIfUserLogged) {
       review.user_id = userAuthStore.currentUser.id;
 
-      
       const addedReview = await fetchData(`/api/reviews`, {
         method: "POST",
         headers: {
@@ -32,6 +31,8 @@ export const useReviewsActions = () => {
         body: JSON.stringify(review),
       });
 
+
+      
       if (addedReview.err) {
         console.log(addedReview.err);
         isAddError.value = true;
@@ -54,10 +55,10 @@ export const useReviewsActions = () => {
         setTimeout(() => (isReviewAdded.value = false), 2500);
       }
     } else {
-      isUserLogged.value = true;
-      setTimeout(() => (isUserLogged.value = false), 2500);
+      isUserNotLogged.value = true;
+      setTimeout(() => (isUserNotLogged.value = false), 2500);
     }
-    isAddingLoading.value = false;
+    isReviewAdding.value = false;
   };
 
   onMounted(async () => {
@@ -82,11 +83,11 @@ export const useReviewsActions = () => {
     isFetchingLoading,
     isError,
     addReviewItem,
-    isUserLogged,
+    isUserNotLogged,
     isReviewAdded,
     isAddError,
     errorMessage,
-    isAddingLoading,
+    isReviewAdding,
     addErrorMessage,
   };
 };

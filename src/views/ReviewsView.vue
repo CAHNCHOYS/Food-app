@@ -14,7 +14,7 @@
       <Transition name="review">
         <div
           class="reviews__message reviews__message_not-logged"
-          v-show="isUserLogged"
+          v-show="isUserNotLogged"
         >
           Для добавления отзыва требуется войти в аккаунт!
         </div>
@@ -37,14 +37,14 @@
         <div class="reviews__add-form review-form">
           <LoadingGif
             class="reviews__loading-form"
-            v-if="isAddingLoading"
+            v-if="isReviewAdding"
           ></LoadingGif>
           <vForm
             @invalid-submit="invalidFormSubmit"
             @submit="submitForm"
             class="review-form__form"
             :validation-schema="formSchema"
-            :class="{ opacity: isAddingLoading }"
+            :class="{ opacity: isReviewAdding }"
           >
             <div class="review-form__elements">
               <div class="review-form__element">
@@ -124,10 +124,10 @@ const {
   isError,
   isFetchingLoading,
   reviews,
-  isUserLogged,
+  isUserNotLogged,
   isReviewAdded,
   isAddError,
-  isAddingLoading,
+  isReviewAdding,
   errorMessage,
   addErrorMessage,
   addReviewItem,

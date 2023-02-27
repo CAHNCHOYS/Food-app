@@ -65,7 +65,11 @@
             <div class="categories__mobile-text">
               {{ categoryText }}
             </div>
-            <img :src="picture" :alt="'Категория ' + categoryText" />
+            <img v-lazy="{
+                src: picture,
+                loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+                error: 'https://sushi-backend-henna.vercel.app/Err.png',
+              }"  :alt="'Категория ' + categoryText" />
           </router-link>
         </div>
       </div>
@@ -83,7 +87,11 @@
               <div class="categories__text">
                 {{ categoryText }}
               </div>
-              <img :src="picture" :alt="'Категория ' + categoryText" />
+              <img  v-lazy="{
+                src: picture,
+                loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+                error: 'https://sushi-backend-henna.vercel.app/Err.png',
+              }"  :alt="'Категория ' + categoryText" />
             </router-link>
           </div>
         </div>

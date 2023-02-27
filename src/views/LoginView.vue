@@ -1,24 +1,22 @@
 <template>
-
-
    <div class="fullscreen">
       <Transition name="message">
 
-         <div class="message message_same-user" v-if="isWrongData">
+         <div v-if="isWrongData" class="message message_same-user" >
             <div class="message__body">
                Не удалось войти по ввденным данным. Пожалуйста, введите правильные данные!
             </div>
          </div>
       </Transition>
       <Transition name="message">
-         <div class="message message_success" v-if="isSuccess">
+         <div v-if="isSuccess" class="message message_success" >
             <div class="message__body">
                Авторизация прошла успешно! Вас переведут на главную страницу !
             </div>
          </div>
       </Transition>
       <Transition name="message">
-         <div class="message message_error" v-if="isErr">
+         <div v-if="isErr" class="message message_error" >
             <div class="message__body">
                {{ errorMessage }}
             </div>
@@ -55,20 +53,20 @@
                      <div class="action-form__element">
                         <div class="action-form__input-body">
                            <div class="action-form__placeholder">Пароль</div>
-                           <vField class="action-form__input" type="password" name="password" @focus="toggleFocus"
+                           <vField class="action-form__input" :type="fieldType" name="password" @focus="toggleFocus"
                               @blur="toggleBlur">
                            </vField>
                         </div>
 
-                        <div class="action-form__show-pass" @click="showPass">
+                        <div class="action-form__show-pass"
+                           @click="fieldType === 'password' ? fieldType = 'text' : fieldType = 'password'">
                            Показать/скрыть пароль
                         </div>
                         <ErrorMessage class="action-form__error-msg" name="password"></ErrorMessage>
                      </div>
 
                      <div class="action-form__input-wrapper">
-                        <button class="action-form__btn" v-if="!isLoading" type="submit"
-                           :class="{ err: isInvalidForm }">
+                        <button class="action-form__btn" v-if="!isLoading" type="submit" :class="{ err: isInvalidForm }">
                            Войти
                         </button>
                      </div>
@@ -77,18 +75,10 @@
 
                <LoadingGif v-if="isLoading"></LoadingGif>
             </div>
-
-
-
             <RouterLink class="home-button" to="/">На главную</RouterLink>
-
          </div>
       </div>
    </div>
-
-
-
-
 </template>
 
 <script setup>
@@ -99,7 +89,7 @@ import { useFormSchemas } from "../Composables/useFormSchemas";
 import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
 import { configure } from "vee-validate";
 
-import { ref,  watch } from "vue";
+import { ref, watch } from "vue";
 import { useUserAuthStore } from '../stores/userAuth.js';
 import { useRouter, useRoute } from 'vue-router';
 import { useUserCartStore } from "../stores/userCart";
@@ -114,16 +104,10 @@ configure({
 });
 
 
-
-
 const { fetchUserCartProducts } = useUserCartStore();
-
-
 
 const router = useRouter();
 const route = useRoute();
-
-
 
 const {
    isErr,
@@ -135,14 +119,8 @@ const {
 } = useFormSchemas();
 
 
-
-
-
-
-
 //Если пользователь нажал на корзину не авторизировавшись то закрываем это сообщение
 const isNotL = ref(true);
-
 //=================================================================================
 watch(() => route.query.redirect, () => {
    isNotL.value = true;
@@ -150,14 +128,11 @@ watch(() => route.query.redirect, () => {
 }, { immediate: true })
 
 
-
-
-
-
 const isWrongData = ref(false);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref("Произошла ошибка");
+const fieldType = ref("password");
 
 const submitForm = async (values) => {
 
@@ -171,7 +146,6 @@ const submitForm = async (values) => {
       },
       body: JSON.stringify(values),
    });
-
 
    console.log(login);
 
@@ -202,25 +176,10 @@ const submitForm = async (values) => {
 
    }
 
-
-
-
    isLoading.value = false;
 
-
-
 };
 
-const showPass = ($event) => {
-   const passwordInput = $event.target
-      .closest(".action-form__element")
-      .querySelector(`input`);
-   console.log(passwordInput);
-
-   passwordInput.type === "password"
-      ? (passwordInput.type = "text")
-      : (passwordInput.type = "password");
-};
 
 
 

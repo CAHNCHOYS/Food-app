@@ -21,23 +21,25 @@ export const useProductsActions = () => {
     if (deletionResult.isRemoved) {
       userCartStore.updateUserCart(product, "Remove");
     }
-    
     if (deletionResult.err) {
       actionErrorMessage.value =   deletionResult.err;
        console.log(deletionResult.err);
       isDeleteError.value = true;
-
+      
       setTimeout(() => (isDeleteError.value = false), 2500);
     }
     isActionLoading.value = false;
   };
 
+
+
+  
   const addProductAction = async (product) => {
     isActionLoading.value = true;
 
     const addedProduct = await userCartStore.addProductToCart(product);
-    console.log(addedProduct);
 
+    console.log(addedProduct);
     if (addedProduct.isUserNotLogged) {
       isNotLoggedUser.value = true;
       setTimeout(() => (isNotLoggedUser.value = false), 2500);

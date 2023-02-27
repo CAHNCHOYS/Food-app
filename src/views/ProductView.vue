@@ -11,14 +11,11 @@
         <div class="product__row">
           <div class="product__picture-col">
             <div class="product__picture _ibg">
-              <img
-                v-lazy="{
-                  src: `https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`,
-                  loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
-                  error: 'https://sushi-backend-henna.vercel.app/Err.png',
-                }"
-                :alt="pageProduct.name"
-              />
+              <img v-lazy="{
+                src: `https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`,
+                loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+                error: 'https://sushi-backend-henna.vercel.app/Err.png',
+              }" :alt="pageProduct.name" />
             </div>
           </div>
           <div class="product__info-col">
@@ -39,17 +36,12 @@
               </div>
               <div class="product__count count-product">
                 <div class="count-product__row">
-                  <div
-                    class="count-product__action count-product__action_minus"
-                    @click="pageProduct.count <= 1 ? '' : pageProduct.count--"
-                  ></div>
+                  <div class="count-product__action count-product__action_minus"
+                    @click="pageProduct.count <= 1 ? '' : pageProduct.count--"></div>
                   <div class="count-product__number">
                     {{ pageProduct.count }}
                   </div>
-                  <div
-                    class="count-product__action icon-plus"
-                    @click="pageProduct.count++"
-                  ></div>
+                  <div class="count-product__action icon-plus" @click="pageProduct.count++"></div>
                 </div>
               </div>
             </div>
@@ -58,60 +50,41 @@
               <p>{{ pageProduct.consists }}</p>
             </div>
             <div class="product__add-to-cart">
-              <button
-                class="btn icon-cart"
-                v-show="!isActionLoading"
-                @click="
-                  addProductAction({
-                    product_id: pageProduct.product_id,
-                    count: pageProduct.count,
-                    name: pageProduct.name,
-                    image: pageProduct.image,
-                    Price: pageProduct.Price,
-                  })
-                "
-              >
+              <button class="btn icon-cart" v-show="!isActionLoading" @click="
+                addProductAction({
+                  product_id: pageProduct.product_id,
+                  count: pageProduct.count,
+                  name: pageProduct.name,
+                  image: pageProduct.image,
+                  Price: pageProduct.Price,
+                })
+              ">
                 Хочу!
               </button>
             </div>
 
-            <LoadingGif
-              class="product__action-load"
-              v-if="isActionLoading"
-            ></LoadingGif>
+            <LoadingGif v-if="isActionLoading" class="product__action-load"></LoadingGif>
 
             <Transition name="product-message">
-              <div
-                class="product-page__message product-message_success"
-                v-if="isProductAdded"
-              >
+              <div v-if="isProductAdded" class="product-page__message product-message_success">
                 Товар добавлен в корзину!
               </div>
             </Transition>
 
             <Transition name="product-message">
-              <div
-                class="product-page__message product-message_error"
-                v-if="isAddProductError"
-              >
+              <div v-if="isAddProductError" class="product-page__message product-message_error">
                 {{ actionErrorMessage }}
               </div>
             </Transition>
 
             <Transition name="product-message">
-              <div
-                class="product-page__message product-message_same"
-                v-if="isAlreadyInCart"
-              >
+              <div class="product-page__message product-message_same" v-if="isAlreadyInCart">
                 Упс, товар уже находится в корзине!
               </div>
             </Transition>
 
             <Transition name="product-message">
-              <div
-                class="product-page__message product-message_error"
-                v-if="isNotLoggedUser"
-              >
+              <div v-if="isNotLoggedUser" class="product-page__message product-message_error">
                 Для добавления товара в корзину необходимо сначала войти в
                 аккаунт!
               </div>
@@ -120,26 +93,16 @@
         </div>
       </div>
 
-      <VErrorMessage
-        style="margin-bottom: 20px"
-        v-if="isErr"
-        :err-message="errorMessage"
-      ></VErrorMessage>
+      <VErrorMessage v-if="isErr" style="margin-bottom: 20px" :err-message="errorMessage"></VErrorMessage>
       <p v-else-if="!isLoading && !pageProduct">
         Не удалось найти товар с таким именем и айди, проверьте ссылку!
       </p>
-
     </div>
-    <div
-      class="product-page__recommended-products recomended-products"
-      v-if="pageProduct"
-    >
+    <div class="product-page__recommended-products recomended-products" v-if="pageProduct">
       <div class="recomended-products__title">Рекомендованные товары</div>
 
       <div class="recomended-products__slider">
-        <ProductsSlider
-          :recommended-products="pageProduct.recommendedCat"
-        ></ProductsSlider>
+        <ProductsSlider :recommended-products="pageProduct.recommendedCat"></ProductsSlider>
       </div>
     </div>
   </div>
@@ -280,7 +243,7 @@ const {
     flex: 1 1 auto;
     padding: 0px 0px 0px 30px;
 
-    > *:last-child {
+    >*:last-child {
       margin-bottom: 0px;
     }
 
@@ -358,8 +321,7 @@ const {
 
   // .product__count
 
-  &__count {
-  }
+  &__count {}
 
   // .product__consist
 
@@ -391,8 +353,7 @@ const {
 
   // .product__action-load
 
-  &__action-load {
-  }
+  &__action-load {}
 }
 
 .recomended-products {
@@ -408,7 +369,6 @@ const {
 
   // .recomended-products__slider
 
-  &__slider {
-  }
+  &__slider {}
 }
 </style>

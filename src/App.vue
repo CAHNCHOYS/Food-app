@@ -145,6 +145,15 @@ body {
   }
 }
 
+img[lazy=loading]{
+  object-fit: contain;
+  height: 70%;
+  width: 70%;
+  left: 50%;
+  top: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
 
 
 .bg-image {

@@ -5,23 +5,23 @@ import { useUserAuthStore } from "./userAuth.js";
 import { fetchData } from "../api/fetchData.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
+ 
   const userAuthStore = useUserAuthStore();
+
   const cartItems = ref([]);
-
   const isFetchingLoading = ref(false);
-
   const isCartProductsErr = ref(false);
-
   const loadErrorMessage = ref("Произошла ошибка при загрузке товаров корзины");
-
   const isPromoActive = ref(false);
+
+
   function updateUserPromo(promo) {
     if (promo === "zZz" || promo === "yYy" || promo === "aAa") {
       isPromoActive.value = true;
     }
   }
 
-  //Proudct actions --------------------------------------------------
+ 
   async function fetchUserCartProducts() {
     if (userAuthStore.currentUser.id) {
       cartItems.value = [];
@@ -114,7 +114,7 @@ export const useUserCartStore = defineStore("userCart", () => {
       method: "DELETE",
       headers: {
         "Content-type": "application/json",
-      },
+      }, 
       body: JSON.stringify({
         product_id: +product.product_id,
         user_id: +userAuthStore.currentUser.id,
@@ -131,20 +131,20 @@ export const useUserCartStore = defineStore("userCart", () => {
     );
   });
 
-  /*------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
   return {
     addProductToCart,
     fetchUserCartProducts,
+    updateUserCart,
+    deleteProductFromCart,
+    updateUserPromo,
+    commitOrder,
+
     cartItems,
     isFetchingLoading,
     getAllProductsPrice,
     isCartProductsErr,
-    updateUserCart,
-    deleteProductFromCart,
     isPromoActive,
     loadErrorMessage,
-    updateUserPromo,
-
-    commitOrder,
   };
 });
