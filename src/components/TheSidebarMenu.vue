@@ -2,19 +2,18 @@
   <div class="sidebar-menu">
     <router-link to="/" class="sidebar-menu__logo">
       <img src="@/assets/Images/PizzaLogo.svg" alt="Site logo" />
-      <div class="sidebar-menu__logo-text"> Food App </div>
+      <div class="sidebar-menu__logo-text">Food App</div>
     </router-link>
     <ul class="sidebar-menu__list">
       <li v-for="link in menuLinks" :key="link.category">
-        <router-link :to="`/Categories/${link.category}`" class="sidebar-menu__link"
-          :class="[link.icon, $route.query.searchProduct ? 'notAct' : '']">{{
-  link.text
-          }}</router-link>
+        <router-link
+          :to="`/Categories/${link.category}`"
+          class="sidebar-menu__link"
+          :class="[link.icon, $route.query.searchProduct ? 'notAct' : '']"
+          >{{ link.text }}
+        </router-link>
       </li>
-
     </ul>
-
-
   </div>
 </template>
 
@@ -67,7 +66,6 @@ const menuLinks = ref([
     text: "Напитки",
     category: "Напитки",
   },
-
 ]);
 </script>
 
@@ -75,8 +73,6 @@ const menuLinks = ref([
 @import "@/assets/adaptive-value.scss";
 
 .sidebar-menu {
-
-
   text-align: center;
   // .sidebar-menu__logo
 
@@ -128,10 +124,9 @@ const menuLinks = ref([
   // .sidebar-menu__list
 
   &__list {
-    >li:not(:last-child) {
+    > li:not(:last-child) {
       margin-bottom: rem(25);
     }
-
   }
 
   // .sidebar-menu__link
@@ -145,7 +140,7 @@ const menuLinks = ref([
     align-items: center;
     color: black;
     padding: 0px 0px 0px rem(45);
-    line-height: calc(30/24);
+    line-height: calc(30 / 24);
 
     &::before {
       font-size: rem(29);
@@ -177,8 +172,6 @@ const menuLinks = ref([
         }
       }
     }
-
-
   }
 }
 </style>

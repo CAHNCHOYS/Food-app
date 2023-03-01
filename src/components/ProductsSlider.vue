@@ -4,7 +4,7 @@
       <div class="products-slider__by-type-body">
         <swiper :modules="[Pagination]" v-bind="swiperSettings" class="products-slider__slider">
           <swiper-slide class="product-slider__slide" v-for="product in productsByType" :key="product.product_id">
-            <single-product :product="product"></single-product>
+            <SingleProduct :product="product" />
           </swiper-slide>
 
           <div class="products-slider__pagination"></div>
@@ -15,7 +15,7 @@
     <div class="products-slider__by-category" v-if="productsByCategory.length">
       <swiper :modules="[Pagination]" v-bind="swiperSettingsCirle" class="products-slider__slider">
         <swiper-slide class="product-slider__slide" v-for="product in productsByCategory" :key="product.product_id">
-          <single-product :is-circle-product="true" :product="product"></single-product>
+          <SingleProduct :is-circle-product="true" :product="product" />
         </swiper-slide>
         <div class="products-slider__pagination"></div>
       </swiper>
@@ -43,7 +43,6 @@ import "swiper/css/pagination";
 //api----------------------------------------------------------------
 import { fetchData } from "../api/fetchData";
 //-------------------------------------------------------------------
-
 
 const props = defineProps({
   productType: String,
@@ -124,9 +123,7 @@ onMounted(async () => {
   if (!props.recommendedProducts && props.productType) {
 
     let getProducts = await fetchData(`/api/productsByType/${props.productType}`)
-   
-
-
+  
     console.log(getProducts);
 
     if (getProducts.length) {
@@ -142,6 +139,7 @@ onMounted(async () => {
   }
   isLoading.value = false;
 });
+
 
 function randomInteger(min, max) {
   // получить случайное число от (min-0.5) до (max+0.5)

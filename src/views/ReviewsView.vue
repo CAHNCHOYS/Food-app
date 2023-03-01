@@ -2,10 +2,12 @@
   <div class="reviews">
     <LoadingGif v-if="isFetchingLoading"></LoadingGif>
     <div class="reviews__body" v-else>
+
+      
       <Transition name="review">
         <div
+          v-if="isReviewAdded"
           class="reviews__message reviews__message_added"
-          v-show="isReviewAdded"
         >
           Отзыв добавлен!
         </div>
@@ -13,14 +15,14 @@
 
       <Transition name="review">
         <div
+          v-if="isUserNotLogged"
           class="reviews__message reviews__message_not-logged"
-          v-show="isUserNotLogged"
         >
           Для добавления отзыва требуется войти в аккаунт!
         </div>
       </Transition>
 
-      <div class="reviews__header" v-if="!isError">
+      <div v-if="!isError" class="reviews__header">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
           <button
@@ -36,8 +38,8 @@
       <slide-up-down v-model="isFormToggled" :duration="500">
         <div class="reviews__add-form review-form">
           <LoadingGif
-            class="reviews__loading-form"
             v-if="isReviewAdding"
+            class="reviews__loading-form"
           ></LoadingGif>
           <vForm
             @invalid-submit="invalidFormSubmit"
@@ -78,10 +80,9 @@
         :err-message="addErrorMessage"
         style="margin-bottom: 20px"
       ></VErrorMessage>
+      <VErrorMessage v-if="isError" :err-message="errorMessage"></VErrorMessage>
 
-      <VErrorMessage :err-message="errorMessage" v-if="isError"></VErrorMessage>
-
-      <div class="reviews__reviews" v-if="reviews.length">
+      <div v-if="reviews.length" class="reviews__reviews">
         <div class="reviews__all-reviews">
           <ReviewItem
             v-for="review in reviews"

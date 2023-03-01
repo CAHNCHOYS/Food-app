@@ -1,7 +1,11 @@
 <template>
   <div class="homepage">
     <div class="homepage__slider main-slider">
-      <Swiper :modules="[Pagination, EffectFlip]" class="main-slider__slider" v-bind="mainSliderSettings">
+      <Swiper
+        :modules="[Pagination, EffectFlip]"
+        class="main-slider__slider"
+        v-bind="mainSliderSettings"
+      >
         <SwiperSlide class="main-slider__slide">
           <div class="main-slider__body">
             <div class="main-slider__content">
@@ -55,43 +59,63 @@
 
     <section class="homepage__categories categories">
       <div class="categories__mobile" v-if="windowStore.getSize < 767.98">
-        <div class="categories__column" v-for="{
-          categoryText,
-          categoryLink,
-        
-          picture,
-        } in mobileCategoires" :key="categoryLink">
-          <router-link class="categories__mobile-body _ibg" :to="`categories/${categoryLink}`">
+        <div
+          class="categories__column"
+          v-for="{
+            categoryText,
+            categoryLink,
+
+            picture,
+          } in mobileCategoires"
+          :key="categoryLink"
+        >
+          <router-link
+            class="categories__mobile-body _ibg"
+            :to="`categories/${categoryLink}`"
+          >
             <div class="categories__mobile-text">
               {{ categoryText }}
             </div>
-            <img v-lazy="{
+            <img
+              v-lazy="{
                 src: picture,
                 loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
                 error: 'https://sushi-backend-henna.vercel.app/Err.png',
-              }"  :alt="'Категория ' + categoryText" />
+              }"
+              :alt="'Категория ' + categoryText"
+            />
           </router-link>
         </div>
       </div>
       <div class="categories__pc">
         <div class="categories__all-categories">
-          <div class="categories__column" v-for="{
-            categoryText,
-            categoryLink,
-            isBigColumn,
-            picture,
-          } in pcCategories" :key="categoryLink" :class="{ categories__column_big: isBigColumn }">
-            <router-link :class="{ pad: !isBigColumn }" class="categories__body _ibg"
-              :to="`categories/${categoryLink}`">
-
+          <div
+            class="categories__column"
+            v-for="{
+              categoryText,
+              categoryLink,
+              isBigColumn,
+              picture,
+            } in pcCategories"
+            :key="categoryLink"
+            :class="{ categories__column_big: isBigColumn }"
+          >
+            <router-link
+              :class="{ pad: !isBigColumn }"
+              class="categories__body _ibg"
+              :to="`categories/${categoryLink}`"
+            >
               <div class="categories__text">
                 {{ categoryText }}
               </div>
-              <img  v-lazy="{
-                src: picture,
-                loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
-                error: 'https://sushi-backend-henna.vercel.app/Err.png',
-              }"  :alt="'Категория ' + categoryText" />
+              <img
+                v-lazy="{
+                  src: picture,
+                  loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+                  error: 'https://sushi-backend-henna.vercel.app/Err.png',
+                }"
+                :alt="'Категория ' + categoryText"
+              />
             </router-link>
           </div>
         </div>
@@ -102,9 +126,12 @@
       <div class="tabs-homepage__header">
         <ul class="tabs-homepage__tabs-list">
           <li v-for="tabLink in tabsMenuList" :key="tabLink.tabIndex">
-            <span :class="{ 'current-tab': currentOpenTab === tabLink.tabIndex }"
-              @click="currentOpenTab = tabLink.tabIndex">
-              {{ tabLink.text }}</span>
+            <span
+              :class="{ 'current-tab': currentOpenTab === tabLink.tabIndex }"
+              @click="currentOpenTab = tabLink.tabIndex"
+            >
+              {{ tabLink.text }}</span
+            >
           </li>
         </ul>
       </div>
@@ -115,7 +142,6 @@
               <ProductsSlider product-type="isNew" v-cloak></ProductsSlider>
             </div>
           </KeepAlive>
-
         </Transition>
 
         <Transition name="slider">
@@ -124,10 +150,7 @@
               <ProductsSlider product-type="isSale" v-cloak></ProductsSlider>
             </div>
           </KeepAlive>
-
-
         </Transition>
-
       </div>
     </section>
 
@@ -153,16 +176,22 @@
           Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum
           voluptate provident quia amet facere vel itaque consequuntur doloribus
           commodi!
-          <span class="company-info__text-hide" :class="{ opacity: !continueText }">
+          <span
+            class="company-info__text-hide"
+            :class="{ opacity: !continueText }"
+          >
             Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sapiente,
             voluptates. Quaerat, explicabo tempore? Vel suscipit voluptatibus
-            asperiores maiores Lo<span v-show="!continueText">... </span></span>
-          <span v-show="continueText">rem ipsum dolor sit amet consectetur adipisicing elit. Modi qui
+            asperiores maiores Lo<span v-show="!continueText">... </span></span
+          >
+          <span v-show="continueText"
+            >rem ipsum dolor sit amet consectetur adipisicing elit. Modi qui
             eius architecto quis repudiandae adipisci debitis dolorum provident
             in quidem vitae, beatae ut corrupti voluptatibus! Aut ab, ut minus
             laudantium repudiandae iure pariatur facere ad ea fugit aliquam
             labore rerum! Molestias nesciunt, sed rem maiores officia
-            repellendus. Id voluptates iusto provident voluptas enim?</span>
+            repellendus. Id voluptates iusto provident voluptas enim?</span
+          >
         </p>
         <p v-show="continueText">
           Lorem, ipsum dolor sit amet consectetur adipisicing elit. Iure
@@ -182,8 +211,12 @@
       </div>
 
       <div class="company-info__continue-btn">
-        <span class="icon-arrow-down" @click="continueText = !continueText"
-          :class="{ active: continueText }">Подробнее</span>
+        <span
+          class="icon-arrow-down"
+          @click="continueText = !continueText"
+          :class="{ active: continueText }"
+          >Подробнее</span
+        >
       </div>
     </section>
   </div>
@@ -204,8 +237,6 @@ import ProductsSlider from "../components/ProductsSlider.vue";
 import { useWindowSizeStore } from "../stores/windowSize.js";
 import { useCategories } from "../Composables/useCategoriesLinks";
 const windowStore = useWindowSizeStore();
-
-
 
 //Табы( переключение слайдеров )
 const currentOpenTab = ref(1);
@@ -242,26 +273,30 @@ const mainSliderSettings = {
 .homepage {
   // .homepage__slider
 
-  &__slider {}
+  &__slider {
+  }
 
-  >* {
+  > * {
     padding: 0px 0px rem(70) 0px;
 
-    @media(max-width: #{$mobile+px}) {
+    @media (max-width: #{$mobile+px}) {
       padding: 0px 0px rem(60) 0px;
     }
   }
 
   // .homepage__categories
-  &__categories {}
+  &__categories {
+  }
 
   // .homepage__tabs
 
-  &__tabs {}
+  &__tabs {
+  }
 
   // .homepage__company-info
 
-  &__company-info {}
+  &__company-info {
+  }
 }
 
 .main-slider {
@@ -309,7 +344,7 @@ const mainSliderSettings = {
     z-index: 4;
     max-width: rem(460);
 
-    >*:last-child {
+    > *:last-child {
       margin-bottom: 0px;
     }
 
@@ -339,7 +374,8 @@ const mainSliderSettings = {
 
   // .main-slider__btn
 
-  &__btn {}
+  &__btn {
+  }
 
   // .main-slider__picture
 
@@ -373,7 +409,6 @@ const mainSliderSettings = {
 }
 
 .categories {
-
   // .categories__mobile
   &__mobile {
     display: grid;
@@ -388,7 +423,8 @@ const mainSliderSettings = {
 
   // .categories__pc
 
-  &__pc {}
+  &__pc {
+  }
 
   // .categories__all-categories
 
@@ -446,8 +482,6 @@ const mainSliderSettings = {
         padding: 0px 0px calc(124 / 200 * 100%) 0px;
       }
     }
-
-
 
     &::before {
       content: "";
@@ -533,21 +567,21 @@ const mainSliderSettings = {
     column-gap: 30px;
     row-gap: 10px;
 
-    >li {
+    > li {
       cursor: pointer;
       font-weight: 500;
       font-size: rem(24);
       line-height: calc(30 / 22);
 
-      >span {
+      > span {
         transition: all 0.3s ease 0s;
       }
 
-      >span.current-tab {
+      > span.current-tab {
         color: #000000;
       }
 
-      >span:not(.current-tab) {
+      > span:not(.current-tab) {
         text-decoration: underline;
         color: #a4acad;
 
@@ -570,7 +604,8 @@ const mainSliderSettings = {
 
   // .tabs-homepage__tab
 
-  &__tab {}
+  &__tab {
+  }
 }
 
 .company-info {
@@ -593,7 +628,7 @@ const mainSliderSettings = {
     line-height: 1.3;
     margin: 0px 0px rem(30) 0px;
 
-    >p:not(:last-child) {
+    > p:not(:last-child) {
       margin-bottom: rem(20);
     }
 
@@ -629,8 +664,6 @@ const mainSliderSettings = {
         font-size: rem(24);
       }
 
-
-
       &.active {
         &::before {
           transform: translate(0, -40%) rotate(-180deg);
@@ -654,32 +687,20 @@ const mainSliderSettings = {
   }
 }
 
-
-
-
-
-
-
-
 .slider-enter-active,
 .slider-leave-active {
   transition: all 0.5s ease 0s;
 }
 
-
 .slider-enter-from {
   transform: translate(-30%, 0);
   opacity: 0;
-
 }
 
 .slider-enter-to {
   transform: translate(0);
   opacity: 1;
-
 }
-
-
 
 .slider-leave-to {
   display: none;

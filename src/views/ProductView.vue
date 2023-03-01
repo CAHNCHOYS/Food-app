@@ -78,7 +78,7 @@
             </Transition>
 
             <Transition name="product-message">
-              <div class="product-page__message product-message_same" v-if="isAlreadyInCart">
+              <div v-if="isAlreadyInCart" class="product-page__message product-message_same">
                 Упс, товар уже находится в корзине!
               </div>
             </Transition>

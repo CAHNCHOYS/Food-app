@@ -4,13 +4,10 @@
             <div class="review__header">
                 <div class="review__user">{{ review.name }}</div>
                 <div class="review__date">{{ new Date(props.review.date).toLocaleDateString() }}</div>
-
             </div>
             <div class="review__text">
                 {{ review.text }}
             </div>
-
-
         </div>
 
     </div>

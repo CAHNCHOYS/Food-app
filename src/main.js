@@ -12,12 +12,11 @@ import VSiteInfo from "./components/VBaseComponents/VSiteInfo.vue";
 import vCustomSelect from "./components/VBaseComponents/vCustomSelect.vue";
 import VLoadingGif from "./components/VBaseComponents/VLoadingGif.vue";
 import VErrorMessage from "./components/VBaseComponents/VErrorMessage.vue";
-import VPopupConfirm from "./components/VBaseComponents/VPopupConfirm.vue";
+
 import VGoBackButton from "./components/VBaseComponents/VGoBackButton.vue";
 
 // import the package
 import VueAwesomePaginate from "vue-awesome-paginate";
-
 // import the necessary css file
 import "vue-awesome-paginate/dist/style.css";
 
@@ -30,8 +29,8 @@ app.use(VueLazyLoad, {});
 app.component("VSiteInfo", VSiteInfo);
 app.component("VCustomSelect", vCustomSelect);
 app.component("VErrorMessage", VErrorMessage);
-app.component("VPopupConfirm", VPopupConfirm);
 app.component("VGoBackButton", VGoBackButton);
+
 
 app.component("LoadingGif", VLoadingGif);
 app.component("slide-up-down", SlideUpDown);

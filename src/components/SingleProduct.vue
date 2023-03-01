@@ -3,8 +3,8 @@
     <div class="single-product__content">
       <Transition name="product-message">
         <div
-          class="single-product__message product-message product-message_success"
           v-if="isProductAdded"
+          class="single-product__message product-message product-message_success"
         >
           Товар добавлен в корзину!
         </div>
@@ -12,8 +12,8 @@
 
       <Transition name="product-message">
         <div
-          class="single-product__message product-message product-message_error"
           v-if="isAddProductError"
+          class="single-product__message product-message product-message_error"
         >
           {{ actionErrorMessage }}
         </div>
@@ -21,8 +21,8 @@
 
       <Transition name="product-message">
         <div
-          class="single-product__message product-message product-message_same"
           v-if="isAlreadyInCart"
+          class="single-product__message product-message product-message_same"
         >
           Упс, товар уже находится в корзине!
         </div>
@@ -30,8 +30,8 @@
 
       <Transition name="product-message">
         <div
-          class="single-product__message product-message product-message_error"
           v-if="isNotLoggedUser"
+          class="single-product__message product-message product-message_error"
         >
           Для добавления товара в корзину необходимо сначала войти в аккаунт!
         </div>
@@ -52,6 +52,7 @@
             :alt="product.product_name"
           />
         </router-link>
+
         <div class="single-product__info" :class="{ center: isCircleProduct }">
           <router-link
             :to="`/Products/${product.name}/${product.product_id}`"
@@ -64,6 +65,7 @@
           </div>
         </div>
       </div>
+
       <div
         v-show="!isActionLoading"
         class="single-product__actions"
