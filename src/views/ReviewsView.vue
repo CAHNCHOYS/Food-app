@@ -81,23 +81,7 @@ import {
 import * as yup from "yup";
 
 import ReviewItem from "../components/ReviewItem.vue";
-
 import { useReviewsActions } from "../Composables/useReviewsActions.js";
-
-
-
-const {
-  isError,
-  isFetchingLoading,
-  reviews,
-  isUserNotLogged,
-  isReviewAdded,
-  isAddError,
-  isReviewAdding,
-  errorMessage,
-  addErrorMessage,
-  addReviewItem,
-} = useReviewsActions();
 
 //Работа с формой --------------------------------------------------------------------------------------------------------
 
@@ -122,6 +106,22 @@ const invalidFormSubmit = () => {
   setTimeout(() => (isInvalidSubmit.value = false), 500);
 };
 //-------------------------------------------------------------------------------------------------------------------------
+
+const {
+  isError,
+  isFetchingLoading,
+  reviews,
+  isUserNotLogged,
+  isReviewAdded,
+  isAddError,
+  isReviewAdding,
+  errorMessage,
+  addErrorMessage,
+
+  addReviewItem,
+} = useReviewsActions();
+
+
 </script>
 
 <style lang="scss" scoped>

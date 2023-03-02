@@ -1,9 +1,9 @@
 <template>
   <div class="category-products">
     <div class="category-products__top-button">
-      <VGoBackButton /> Назад 
+      <VGoBackButton /> 
     </div>
-
+     
     <LoadingGif v-if="isLoading"></LoadingGif>
     <div class="category-products__content" v-else>
       <div class="category-products__header">
