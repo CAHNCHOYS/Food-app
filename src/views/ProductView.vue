@@ -1,21 +1,18 @@
 <template>
   <div class="product-page">
     <div class="product-page__back-button">
-      <VGoBackButton> </VGoBackButton>
+      <VGoBackButton />
     </div>
 
     <div class="product-page__product-body">
-      <LoadingGif v-if="isLoading"></LoadingGif>
+      <LoadingGif v-if="isProductLoading" />
 
       <div class="product-page__product-content product" v-if="pageProduct">
         <div class="product__row">
           <div class="product__picture-col">
             <div class="product__picture _ibg">
-              <img v-lazy="{
-                src: `https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`,
-                loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
-                error: 'https://sushi-backend-henna.vercel.app/Err.png',
-              }" :alt="pageProduct.name" />
+              <img :src="`https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`"
+                :alt="pageProduct.name" />
             </div>
           </div>
           <div class="product__info-col">
@@ -63,38 +60,39 @@
               </button>
             </div>
 
-            <LoadingGif v-if="isActionLoading" class="product__action-load"></LoadingGif>
+            <LoadingGif v-if="isActionLoading" class="product__action-load" />
+
 
             <Transition name="product-message">
-              <div v-if="isProductAdded" class="product-page__message product-message_success">
+              <VAlert :position="'static'" :type="'success'" v-if="isProductAdded">
                 Товар добавлен в корзину!
-              </div>
+              </VAlert>
             </Transition>
 
             <Transition name="product-message">
-              <div v-if="isAddProductError" class="product-page__message product-message_error">
+              <VAlert :position="'static'" :type="'error'" v-if="isAddProductError">
                 {{ actionErrorMessage }}
-              </div>
+              </VAlert>
             </Transition>
 
             <Transition name="product-message">
-              <div v-if="isAlreadyInCart" class="product-page__message product-message_same">
+              <VAlert :position="'static'" :type="'same'" v-if="isAlreadyInCart">
                 Упс, товар уже находится в корзине!
-              </div>
+              </VAlert>
             </Transition>
 
             <Transition name="product-message">
-              <div v-if="isNotLoggedUser" class="product-page__message product-message_error">
+              <VAlert :position="'static'" :type="'error'" v-if="isNotLoggedUser">
                 Для добавления товара в корзину необходимо сначала войти в
                 аккаунт!
-              </div>
+              </VAlert>
             </Transition>
           </div>
         </div>
       </div>
 
-      <VErrorMessage v-if="isErr" style="margin-bottom: 20px" :err-message="errorMessage"></VErrorMessage>
-      <p v-else-if="!isLoading && !pageProduct">
+      <VErrorMessage v-if="isFetchError" style="margin-bottom: 20px" :err-message="errorMessage" />
+      <p v-else-if="!isProductLoading && !pageProduct">
         Не удалось найти товар с таким именем и айди, проверьте ссылку!
       </p>
     </div>
@@ -102,7 +100,7 @@
       <div class="recomended-products__title">Рекомендованные товары</div>
 
       <div class="recomended-products__slider">
-        <ProductsSlider :recommended-products="pageProduct.recommendedCat"></ProductsSlider>
+        <ProductsSlider :recommended-products="pageProduct.recommendedCat" />
       </div>
     </div>
   </div>
@@ -117,17 +115,18 @@ const props = defineProps({
   name: String,
 });
 
-const { isErr, isLoading, pageProduct, errorMessage } =
+const { isFetchError, isProductLoading, pageProduct, errorMessage } =
   useSingleProductFetch(props);
 
 const {
-  addProductAction,
   isActionLoading,
   isNotLoggedUser,
   isAlreadyInCart,
   isProductAdded,
   actionErrorMessage,
   isAddProductError,
+
+  addProductAction,
 } = useProductsActions();
 </script>
 

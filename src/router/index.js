@@ -1,6 +1,5 @@
 import {
   createRouter,
-  createWebHistory,
   createWebHashHistory,
 } from "vue-router";
 import HomeView from "../views/HomeView.vue";
@@ -33,7 +32,7 @@ const router = createRouter({
       meta: {
         layout: "Login",
       },
-
+      //Если уже авторизирован
       beforeEnter(to, from) {
         if (localStorage.getItem("token")) {
           return {
@@ -158,9 +157,5 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {},
 });
 
-// router.beforeEach((to, from)=>{
-//   console.log(to);
-//   console.log(from);
-// })
 
 export default router;

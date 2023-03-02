@@ -3,33 +3,24 @@
     <LoadingGif v-if="isFetchingLoading"></LoadingGif>
     <div class="reviews__body" v-else>
 
-      
+
       <Transition name="review">
-        <div
-          v-if="isReviewAdded"
-          class="reviews__message reviews__message_added"
-        >
+        <div class="reviews__message reviews__message_added" v-if="isReviewAdded">
           Отзыв добавлен!
         </div>
       </Transition>
 
       <Transition name="review">
-        <div
-          v-if="isUserNotLogged"
-          class="reviews__message reviews__message_not-logged"
-        >
+        <div class="reviews__message reviews__message_not-logged" v-if="isUserNotLogged">
           Для добавления отзыва требуется войти в аккаунт!
         </div>
       </Transition>
 
-      <div v-if="!isError" class="reviews__header">
+      <div class="reviews__header" v-if="!isError">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
-          <button
-            class="reviews__add-button"
-            :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
-            @click="isFormToggled = !isFormToggled"
-          >
+          <button class="reviews__add-button" :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
+            @click="isFormToggled = !isFormToggled">
             Добавить отзыв
           </button>
         </div>
@@ -37,59 +28,38 @@
 
       <slide-up-down v-model="isFormToggled" :duration="500">
         <div class="reviews__add-form review-form">
-          <LoadingGif
-            v-if="isReviewAdding"
-            class="reviews__loading-form"
-          ></LoadingGif>
-          <vForm
-            @invalid-submit="invalidFormSubmit"
-            @submit="submitForm"
-            class="review-form__form"
-            :validation-schema="formSchema"
-            :class="{ opacity: isReviewAdding }"
-          >
+          <LoadingGif class="reviews__loading-form" v-if="isReviewAdding" />
+          <vForm @invalid-submit="invalidFormSubmit" @submit="submitForm" class="review-form__form"
+            :validation-schema="formSchema" :class="{ opacity: isReviewAdding }">
             <div class="review-form__elements">
               <div class="review-form__element">
                 <div class="review-form__element-title">Ваше сообщение</div>
                 <div class="review-form__textarea">
-                  <vField as="textarea" name="message" placeholder="Сообщение">
-                  </vField>
+                  <vField as="textarea" name="message" placeholder="Сообщение" />
+                  
                 </div>
-                <FormError
-                  class="review-form__error-msg"
-                  name="message"
-                ></FormError>
+                <FieldError class="review-form__error-msg" name="message" />
               </div>
 
               <div class="review-form__submit">
-                <button
-                  type="submit"
-                  :class="{ err: isInvalidSubmit }"
-                  :disabled="isInvalidSubmit"
-                >
+                <button type="submit" :class="{ err: isInvalidSubmit }" :disabled="isInvalidSubmit">
                   Отправить отзыв
                 </button>
               </div>
             </div>
           </vForm>
+
+          <VErrorMessage v-if="isAddError" :err-message="addErrorMessage" style="margin-bottom: 20px" />
         </div>
       </slide-up-down>
 
-      <VErrorMessage
-        v-if="isAddError"
-        :err-message="addErrorMessage"
-        style="margin-bottom: 20px"
-      ></VErrorMessage>
-      <VErrorMessage v-if="isError" :err-message="errorMessage"></VErrorMessage>
+
+      <VErrorMessage v-if="isError" :err-message="errorMessage" />
 
       <div v-if="reviews.length" class="reviews__reviews">
         <div class="reviews__all-reviews">
-          <ReviewItem
-            v-for="review in reviews"
-            :key="review.review_id"
-            :review="review"
-          >
-          </ReviewItem>
+          <ReviewItem v-for="review in reviews" :key="review.review_id" :review="review" />
+
         </div>
       </div>
 
@@ -101,25 +71,20 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 import {
   Form as vForm,
   Field as vField,
-  ErrorMessage as FormError,
+  ErrorMessage as FieldError,
 } from "vee-validate";
 import * as yup from "yup";
-import { configure } from "vee-validate";
 
 import ReviewItem from "../components/ReviewItem.vue";
-import { ref } from "vue";
+
 import { useReviewsActions } from "../Composables/useReviewsActions.js";
 
-// Default values
-configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
-});
+
 
 const {
   isError,
@@ -219,8 +184,7 @@ const invalidFormSubmit = () => {
 
   // .reviews__button
 
-  &__button {
-  }
+  &__button {}
 
   // .reviews__add-button
 
@@ -297,11 +261,11 @@ const invalidFormSubmit = () => {
 
   // .reviews__no-reviews
 
-  &__no-reviews {
-  }
+  &__no-reviews {}
 }
 
 .review-form {
+
   // .review-form__form
   &__form {
     &.opacity {
@@ -319,8 +283,7 @@ const invalidFormSubmit = () => {
 
   // .review-form__element
 
-  &__element {
-  }
+  &__element {}
 
   // .review-form__element-title
 

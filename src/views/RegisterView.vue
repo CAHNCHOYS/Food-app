@@ -1,31 +1,28 @@
 <template>
-  <div class="fullscreen" v-cloak>
+  <div class="fullscreen">
     <Transition name="message">
-      <div class="message message_same-user" v-if="isSameUser">
-        <div class="message__body">
-          Упс, пользователь с такой же почтой уже существует (
-        </div>
-      </div>
+      <VAlert :position="'fixed'" :type="'same'" v-if="isSameUser">
+        Упс, пользователь с такой же почтой уже существует (
+      </VAlert>
     </Transition>
 
     <Transition name="message">
-      <div class="message message_error" v-if="isErr">
-        <div class="message__body">
-          {{ errorMessage }}
-        </div>
-      </div>
+      <VAlert :position="'fixed'" :type="'error'" v-if="isRegistrationError">
+        {{ registerErrorMessage }}
+      </VAlert>
     </Transition>
 
     <Transition name="message">
-      <div class="message message_success" v-if="isSuccess">
-        <div class="message__body">Пользователь добавлен в базу данных !)</div>
-      </div>
+      <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
+        Пользователь добавлен в базу данных !)
+      </VAlert>
     </Transition>
+
     <div class="fullscreen__body">
       <div class="fullscreen__content">
         <div class="fullscreen__form-body">
           <vForm
-            @submit="submitForm"
+            @submit="registerUser"
             @invalid-submit="invalidSubmit"
             class="fullscreen__form action-form"
             :validation-schema="registerSchema"
@@ -39,16 +36,12 @@
                   <vField
                     class="action-form__input"
                     type="text"
-                    name="username"
+                    name="name"
                     @focus="toggleFocus"
                     @blur="toggleBlur"
-                  >
-                  </vField>
+                  />
                 </div>
-                <ErrorMessage
-                  class="action-form__error-msg"
-                  name="username"
-                ></ErrorMessage>
+                <FieldError class="action-form__error-msg" name="name" />
               </div>
 
               <div class="action-form__element">
@@ -63,10 +56,7 @@
                   >
                   </vField>
                 </div>
-                <ErrorMessage
-                  class="action-form__error-msg"
-                  name="email"
-                ></ErrorMessage>
+                <FieldError class="action-form__error-msg" name="email" />
               </div>
 
               <div class="action-form__element">
@@ -80,13 +70,9 @@
                     @focus="toggleFocus"
                     @keydown="phoneControl"
                     @blur="toggleBlur"
-                  >
-                  </vField>
+                  />
                 </div>
-                <ErrorMessage
-                  class="action-form__error-msg"
-                  name="phone"
-                ></ErrorMessage>
+                <FieldError class="action-form__error-msg" name="phone" />
               </div>
 
               <div class="action-form__element">
@@ -95,8 +81,7 @@
                   :default-title="'Ваш город'"
                   @update-value="updateCity"
                   :options="cities"
-                >
-                </VCustomSelect>
+                />
               </div>
 
               <div class="action-form__element">
@@ -108,13 +93,9 @@
                     @focus="toggleFocus"
                     @blur="toggleBlur"
                     type="password"
-                  >
-                  </vField>
+                  />
                 </div>
-                <ErrorMessage
-                  class="action-form__error-msg"
-                  name="password"
-                ></ErrorMessage>
+                <FieldError class="action-form__error-msg" name="password" />
               </div>
 
               <div class="action-form__element">
@@ -124,33 +105,32 @@
                     class="action-form__input"
                     name="passwordRepeat"
                     type="password"
-                  >
-                  </vField>
+                  />
                 </div>
-                <ErrorMessage
+                <FieldError
                   class="action-form__error-msg"
                   name="passwordRepeat"
-                ></ErrorMessage>
+                />
               </div>
               <div class="action-form__element">
                 <button
-                  :disabled="isLoading"
+                  v-show="!isLoading"
                   class="action-form__btn"
                   type="submit"
-                  :class="{ err: isInvalidForm }"
+                  :class="{ err: isInvalidFormSubmit }"
                 >
                   Регистрация
                 </button>
               </div>
 
-              <LoadingGif v-if="isLoading"></LoadingGif>
+              <LoadingGif v-if="isLoading" />
             </div>
           </vForm>
 
           <Transition name="login-btn">
             <div class="action-form__login-btn" v-if="userCanGoToLogin">
-              <router-link class="action-form__btn" to="/Login"
-                >Перейти к авторизации</router-link
+              <RouterLink class="action-form__btn" to="/Login"
+                >Перейти к авторизации</RouterLink
               >
             </div>
           </Transition>
@@ -162,55 +142,50 @@
 </template>
 
 <script setup>
-import { useFormSchemas } from "../Composables/useFormSchemas";
-
-import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
-import { configure } from "vee-validate";
-
-import { fetchData } from "../api/fetchData";
 import { ref } from "vue";
 
-// Default values
-configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
-});
+import { useFormSchemas } from "../Composables/useFormSchemas";
+import { useFormActions } from "../Composables/useFormActions";
+import {
+  Form as vForm,
+  Field as vField,
+  ErrorMessage as FieldError,
+} from "vee-validate";
 
+import { fetchData } from "../api/fetchData";
+const { registerSchema } = useFormSchemas();
+
+const {
+  isInvalidFormSubmit,
+  toggleBlur,
+  toggleFocus,
+  invalidSubmit,
+  phoneControl,
+} = useFormActions();
+
+const isRegistrationError = ref(false);
 const isSuccess = ref(false);
-const isSameUser = ref(false);
-const userCanGoToLogin = ref(false);
+const isSameUser = ref(false); // Если введенные данные уже есть в базе данных
 const isLoading = ref(false);
-const errorMessage = ref("Произошла ошибка");
+
+const userCanGoToLogin = ref(false);
+const registerErrorMessage = ref("Произошла ошибка");
 
 const cities = ref(["Москва", "СПБ", "Донецк", "Ростов"]);
 const selectedCity = ref(cities.value[0]);
-
 const updateCity = (city) => {
   selectedCity.value = city;
 };
 
-const {
-  registerSchema,
-  isErr,
-  toggleBlur,
-  toggleFocus,
-  isInvalidForm,
-  invalidSubmit,
-} = useFormSchemas();
-
-//Работа с формой ---------------------------------------------------------------------
-const submitForm = async (values, { resetForm }) => {
+const registerUser = async (values, { resetForm }) => {
   isLoading.value = true;
 
   let userData = {
     ...values,
-    name: values.username,
     city: selectedCity.value,
   };
 
-  const response = await fetchData("/api/register", {
+  const registeredUser = await fetchData("/api/register", {
     method: "POST",
     headers: {
       "Content-type": "application/json",
@@ -218,46 +193,24 @@ const submitForm = async (values, { resetForm }) => {
     body: JSON.stringify(userData),
   });
 
-  console.log(response);
-  if (response.isSuccess) {
+  console.log(registeredUser);
+  if (registeredUser.isSuccess) {
     isSuccess.value = true;
     setTimeout(() => (isSuccess.value = false), 3000);
     resetForm();
     userCanGoToLogin.value = true;
-  } else if (response.isSameUser) {
+  } else if (registeredUser.isSameUser) {
     isSameUser.value = true;
+
     setTimeout(() => (isSameUser.value = false), 3000);
-  } else if (response.err) {
-    console.log(response.err);
-    errorMessage.value = response.err;
-    isErr.value = true;
-    setTimeout(() => (isErr.value = false), 3000);
+  } else if (registeredUser.err) {
+    console.log(registeredUser.err);
+    registerErrorMessage.value = registeredUser.err;
+    isRegistrationError.value = true;
+    setTimeout(() => (isRegistrationError.value = false), 3000);
   }
 
   isLoading.value = false;
-};
-//-------------------------------------------------------------------------------------
-
-//Контроль только цифр пробела и Backspace в поле номер телефона
-const phoneControl = (event) => {
-  console.log(event.key);
-  if (
-    !(
-      (event.key >= "0" && event.key <= "9") ||
-      event.key == "+" ||
-      event.key == "Backspace" ||
-      event.key == "(" ||
-      event.key == ")" ||
-      event.key == "-" ||
-      event.key == "ArrowLeft" ||
-      event.key == "ArrowRight" ||
-      event.key == "Delete" ||
-      event.key == "Tab" ||
-      event.key == " "
-    )
-  ) {
-    event.preventDefault();
-  }
 };
 </script>
 

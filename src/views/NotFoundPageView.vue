@@ -134,7 +134,7 @@
           Упс, произошла ошибка. Не удалось найти страницу (
         </div>
         <div class="not-found__button">
-          <router-link to="/">На главную</router-link>
+          <RouterLink to="/">На главную</RouterLink>
         </div>
       </div>
     </div>
@@ -143,6 +143,7 @@
 
 <script setup>
 import { onMounted } from "vue";
+import { RouterLink } from "vue-router";
 
 onMounted(() => {
   let elem = document.querySelector(".not-found");

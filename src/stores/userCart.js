@@ -12,9 +12,9 @@ export const useUserCartStore = defineStore("userCart", () => {
   const isFetchingLoading = ref(false);
   const isCartProductsErr = ref(false);
   const loadErrorMessage = ref("Произошла ошибка при загрузке товаров корзины");
+
+
   const isPromoActive = ref(false);
-
-
   function updateUserPromo(promo) {
     if (promo === "zZz" || promo === "yYy" || promo === "aAa") {
       isPromoActive.value = true;
@@ -34,10 +34,10 @@ export const useUserCartStore = defineStore("userCart", () => {
       if (userCartProducts.length) {
         cartItems.value = userCartProducts;
       } else if (userCartProducts.err) {
-        loadErrorMessage.value =
-          userCartProducts.err.message || userCartProducts.err.sqlMessage;
-        console.log(userCartProducts.err);
+        loadErrorMessage.value = userCartProducts.err;
 
+        console.log(userCartProducts.err);
+        
         isCartProductsErr.value = true;
       }
 
@@ -60,12 +60,12 @@ export const useUserCartStore = defineStore("userCart", () => {
           }),
         })
       );
-
       let results = await Promise.all(requests);
       console.log(results);
 
       let resultesJson = await Promise.all(results.map((res) => res.json()));
       console.log(resultesJson);
+
       return resultesJson;
     } catch (err) {
       console.log(err);
@@ -78,8 +78,7 @@ export const useUserCartStore = defineStore("userCart", () => {
       if (!product.count) {
         product.count = 1;
       }
-
-      const addProductFetch = await fetchData(`/api/cartProducts`, {
+      const addedProduct = await fetchData(`/api/cartProducts`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -91,7 +90,7 @@ export const useUserCartStore = defineStore("userCart", () => {
         }),
       });
 
-      return addProductFetch;
+      return addedProduct;
     } else
       return {
         isUserNotLogged: true,

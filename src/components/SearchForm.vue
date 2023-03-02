@@ -1,7 +1,7 @@
 <template>
   <vForm
-    @submit="formSubmit"
-    :validation-schema="formSchema"
+    @submit="searcProducts"
+    :validation-schema="searchSchema"
     class="search-form"
   >
     <div class="search-form__header">
@@ -10,12 +10,8 @@
         type="text"
         name="search"
         class="search-form__input"
-      ></vField>
-      <ErrorMessage
-        as="div"
-        name="search"
-        class="search-form__wrong-data"
-      ></ErrorMessage>
+      />
+      <FieldError as="div" name="search" class="search-form__wrong-data" />
     </div>
 
     <div class="search-form__bottom">
@@ -24,25 +20,25 @@
         <div class="search-form__radio-column">
           <div class="search-form__all-labels">
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Напитки">
-              </vField>
+              <vField name="categories" type="checkbox" value="Напитки" />
+
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Напитки</div>
             </label>
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Пиццы"> </vField>
+              <vField name="categories" type="checkbox" value="Пиццы" />
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Пиццы</div>
             </label>
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="WOK"> </vField>
+              <vField name="categories" type="checkbox" value="WOK" />
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Wok</div>
             </label>
 
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Корн доги">
-              </vField>
+              <vField name="categories" type="checkbox" value="Корн доги" />
+
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Корн доги</div>
             </label>
@@ -52,37 +48,36 @@
         <div class="search-form__radio-column">
           <div class="search-form__all-labels">
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Суши"> </vField>
+              <vField name="categories" type="checkbox" value="Суши" />
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Роллы</div>
             </label>
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Роллы"> </vField>
+              <vField name="categories" type="checkbox" value="Роллы" />
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Суши</div>
             </label>
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Салаты">
-              </vField>
+              <vField name="categories" type="checkbox" value="Салаты" />
+
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Салаты</div>
             </label>
 
             <label class="search-form__label">
-              <vField name="categories" type="checkbox" value="Супы"> </vField>
+              <vField name="categories" type="checkbox" value="Супы" />
               <div class="search-form__checkbox-emulator"></div>
               <div class="search-form__elem-text">Супы</div>
             </label>
           </div>
         </div>
       </div>
-      <ErrorMessage
+      <FieldError
         as="div"
         style="margin-bottom: 15px"
         name="categories"
         class="search-form__wrong-data"
-      >
-      </ErrorMessage>
+      />
 
       <button type="submit" class="search-form__submit">Искать !</button>
     </div>
@@ -90,26 +85,26 @@
 </template>
 
 <script setup>
-import * as yup from "yup";
-import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
+import {
+  Form as vForm,
+  Field as vField,
+  ErrorMessage as FieldError,
+} from "vee-validate";
+
+import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useRouter } from "vue-router";
+
+
+
 const emit = defineEmits(["closeForm"]);
+
+const { searchSchema } = useFormSchemas();
 
 const router = useRouter();
 
-const formSchema = yup.object({
-  search: yup
-    .string()
-    .required("Поле обязательное для ввода")
-    .min(1, "Поле должно содержать больше символов"),
-  categories: yup
-    .array()
-    .required("Выберете хотя бы одну категорию")
-    .min(1, "Выберете хотя бы одну категорию"),
-});
 
-const formSubmit = (values) => {
+const searcProducts = (values) => {
   console.log(values);
 
   router.push({
@@ -122,7 +117,6 @@ const formSubmit = (values) => {
       searchCategories: values.categories.join(","),
     },
   });
-
   emit("closeForm");
 };
 </script>

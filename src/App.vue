@@ -1,5 +1,5 @@
 <template>
-  <SiteLoad v-if="isLoading"> </SiteLoad>
+  <SiteLoad v-if="isSiteLoading" /> 
   <component :is="getLayout" v-else>
     <router-view v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
@@ -10,29 +10,34 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
-import { useLayouts } from "@/Composables/useLayouts.js";
+import { onMounted, onUnmounted, ref } from "vue";
+
 import { useWindowSizeStore } from "./stores/windowSize";
 import { useUserAuthStore } from "./stores/userAuth.js";
-import { onMounted, onUnmounted, ref } from "vue";
 import { useUserCartStore } from "./stores/userCart";
+
 import SiteLoad from "./components/SiteLoad.vue";
 
-const route = useRoute();
-const isLoading = ref(true);
+import { useRoute } from "vue-router";
+import { useLayouts } from "@/Composables/useLayouts.js";
+
+
+const isSiteLoading = ref(true);
 
 const userAuthStore = useUserAuthStore();
 const userCartStore = useUserCartStore();
 
 //Смена layout в зависимости от routa
+const route = useRoute();
 const { getLayout } = useLayouts(route);
 
-//Отслеживание изменения ширины экрана ========================================
+
 const windowSizeStore = useWindowSizeStore();
 const checkSize = () => {
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
 };
 onMounted(async () => {
+
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
   window.addEventListener("resize", checkSize);
 
@@ -42,13 +47,15 @@ onMounted(async () => {
     await userCartStore.fetchUserCartProducts();
   }
 
-  isLoading.value = false;
+ 
+ isSiteLoading.value = false;
 });
+
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkSize);
 });
-//================================================================================
+
 </script>
 
 <style lang="scss">
@@ -171,9 +178,10 @@ img[lazy=loading]{
 }
 
 //-------------------------------------
-
 //Фикс свайпера во влексах
 * {
   min-width: 0;
 }
+
+
 </style>

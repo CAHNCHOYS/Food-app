@@ -1,17 +1,17 @@
-import { computed, ref, watch } from "vue";
+import {  ref, watch } from "vue";
 
 import { fetchData } from "../api/fetchData";
 
 export const useSingleProductFetch = (props) => {
   const pageProduct = ref(null);
-  const isLoading = ref(false);
-  const isErr = ref(false);
+  const isProductLoading = ref(false);
+  const isFetchError = ref(false);
   const errorMessage = ref("Произошла ошибка(");
 
   watch(
     [() => props.name, () => props.id],
     async () => {
-      isLoading.value = true;
+      isProductLoading.value = true;
       pageProduct.value = null;
 
       const product = await fetchData(
@@ -24,14 +24,14 @@ export const useSingleProductFetch = (props) => {
 
       if (product.err) {
         errorMessage.value = product.err;
-        isErr.value = true;
+        isFetchError.value = true;
         console.log(product.err);
       }
 
-      isLoading.value = false;
+      isProductLoading.value = false;
     },
     { immediate: true }
   );
 
-  return { pageProduct, isLoading, isErr, errorMessage };
+  return { pageProduct, isProductLoading, isFetchError, errorMessage };
 };

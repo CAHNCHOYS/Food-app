@@ -3,38 +3,34 @@ import { createPinia } from "pinia";
 
 import App from "./App.vue";
 import router from "./router";
-import SlideUpDown from "vue3-slide-up-down";
-import ProductsSlider from "./components/ProductsSlider.vue";
-import SingleProduct from "./components/SingleProduct.vue";
+import { global } from "./GlobalComponents.js";
 
-import VueLazyLoad from "vue3-lazyload";
-import VSiteInfo from "./components/VBaseComponents/VSiteInfo.vue";
-import vCustomSelect from "./components/VBaseComponents/vCustomSelect.vue";
-import VLoadingGif from "./components/VBaseComponents/VLoadingGif.vue";
-import VErrorMessage from "./components/VBaseComponents/VErrorMessage.vue";
+import { configure } from "vee-validate";
 
-import VGoBackButton from "./components/VBaseComponents/VGoBackButton.vue";
-
-// import the package
-import VueAwesomePaginate from "vue-awesome-paginate";
-// import the necessary css file
-import "vue-awesome-paginate/dist/style.css";
+//vee-validate
+configure({
+  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
+  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
+  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
+});
 
 const app = createApp(App);
+
 app.use(createPinia());
-app.use(VueAwesomePaginate);
+app.use(global.VueAwesomePaginate);
 app.use(router);
-app.use(VueLazyLoad, {});
+app.use(global.VueLazyLoad, {});
 
-app.component("VSiteInfo", VSiteInfo);
-app.component("VCustomSelect", vCustomSelect);
-app.component("VErrorMessage", VErrorMessage);
-app.component("VGoBackButton", VGoBackButton);
+app.component("VSiteInfo", global.VSiteInfo);
+app.component("VCustomSelect", global.vCustomSelect);
+app.component("VErrorMessage", global.VErrorMessage);
+app.component("VGoBackButton", global.VGoBackButton);
+app.component("VAlert", global.VAlert);
 
-
-app.component("LoadingGif", VLoadingGif);
-app.component("slide-up-down", SlideUpDown);
-app.component("SingleProduct", SingleProduct);
-app.component("ProductsSlider", ProductsSlider);
+app.component("LoadingGif", global.VLoadingGif);
+app.component("slide-up-down", global.SlideUpDown);
+app.component("SingleProduct", global.SingleProduct);
+app.component("ProductsSlider", global.ProductsSlider);
 
 app.mount("#app");

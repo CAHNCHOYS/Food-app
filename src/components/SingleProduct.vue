@@ -2,116 +2,75 @@
   <article class="single-product" :class="{ white: !isCircleProduct }">
     <div class="single-product__content">
       <Transition name="product-message">
-        <div
-          v-if="isProductAdded"
-          class="single-product__message product-message product-message_success"
-        >
+        <VAlert :position="'absolute'" :type="'success'" v-if="isProductAdded">
           Товар добавлен в корзину!
-        </div>
+        </VAlert>
+        
       </Transition>
 
       <Transition name="product-message">
-        <div
-          v-if="isAddProductError"
-          class="single-product__message product-message product-message_error"
-        >
+        <VAlert :position="'absolute'" :type="'error'" v-if="isAddProductError">
           {{ actionErrorMessage }}
-        </div>
+        </VAlert>
+     
       </Transition>
 
       <Transition name="product-message">
-        <div
-          v-if="isAlreadyInCart"
-          class="single-product__message product-message product-message_same"
-        >
+        <VAlert :position="'absolute'" :type="'same'" v-if="isAlreadyInCart">
           Упс, товар уже находится в корзине!
-        </div>
+        </VAlert>
+
       </Transition>
 
       <Transition name="product-message">
-        <div
-          v-if="isNotLoggedUser"
-          class="single-product__message product-message product-message_error"
-        >
-          Для добавления товара в корзину необходимо сначала войти в аккаунт!
-        </div>
+        <VAlert :position="'absolute'" :type="'error'" v-if="isNotLoggedUser">
+          Для добавления товара нужно сначала авторизироваться!
+        </VAlert>
+
       </Transition>
 
       <div class="single-product__body">
-        <router-link
-          :to="`/Products/${product.name}/${product.product_id}`"
-          :class="{ circle: isCircleProduct }"
-          class="single-product__image _ibg"
-        >
-          <img
-            v-lazy="{
-              src: `https://sushi-backend-henna.vercel.app/Products/${product.image}`,
-              loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
-              error: 'https://sushi-backend-henna.vercel.app/Err.png',
-            }"
-            :alt="product.product_name"
-          />
-        </router-link>
+        <RouterLink :to="`/Products/${product.name}/${product.product_id}`" :class="{ circle: isCircleProduct }"
+          class="single-product__image _ibg">
+          <img v-lazy="{
+            src: `https://sushi-backend-henna.vercel.app/Products/${product.image}`,
+            loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+            error: 'https://sushi-backend-henna.vercel.app/Err.png',
+          }" :alt="product.product_name" />
+        </RouterLink>
 
         <div class="single-product__info" :class="{ center: isCircleProduct }">
-          <router-link
-            :to="`/Products/${product.name}/${product.product_id}`"
-            class="single-product__name"
-          >
+          <RouterLink :to="`/Products/${product.name}/${product.product_id}`" class="single-product__name">
             {{ product.name }}
-          </router-link>
+          </RouterLink>
           <div class="single-product__size" v-if="!isCircleProduct">
             {{ product.textSize }}
           </div>
         </div>
       </div>
 
-      <div
-        v-show="!isActionLoading"
-        class="single-product__actions"
-        :class="{ border: !isCircleProduct }"
-      >
+      <div v-show="!isActionLoading" class="single-product__actions" :class="{ border: !isCircleProduct }">
         <div class="single-product__pricing">
           <div class="single-product__price">{{ product.Price }}₽</div>
           <div class="single-product__old-price" v-if="product.oldPrice">
             {{ product.oldPrice }}₽
           </div>
         </div>
-        <div class="single-product__button" v-if="!isCircleProduct">
-          <button
-            class="btn icon-cart"
-            :disabled="isActionLoading || isNotLoggedUser"
-            @click="
-              addProductAction({
-                name: product.name,
-                product_id: product.product_id,
-                image: product.image,
-                Price: product.Price,
-              })
-            "
-          >
-            Хочу!
-          </button>
-        </div>
-
-        <button
-          v-else
-          class="single-product__add-btn icon-plus"
-          @click="
+        <div class="single-product__button" >
+          <button class="btn icon-cart"  v-show="!isActionLoading" :disabled="isNotLoggedUser" @click="
             addProductAction({
               name: product.name,
               product_id: product.product_id,
               image: product.image,
               Price: product.Price,
             })
-          "
-        ></button>
+          ">
+            Хочу!
+          </button>
+        </div>
       </div>
 
-      <LoadingGif
-        class="single-product__action-loading"
-        v-show="isActionLoading"
-      ></LoadingGif>
+      <LoadingGif class="single-product__action-loading" v-show="isActionLoading" />
     </div>
   </article>
 </template>
@@ -135,8 +94,9 @@ const {
   isAddProductError,
   isActionLoading,
   isAlreadyInCart,
-  addProductAction,
   isProductAdded,
+
+  addProductAction,
   actionErrorMessage,
 } = useProductsActions();
 </script>
@@ -158,13 +118,13 @@ const {
     display: flex;
     position: relative;
     flex-direction: column;
+    z-index: 2;
     flex: 1 1 auto;
   }
 
   // .single-product__action-loading
 
-  &__action-loading {
-  }
+  &__action-loading {}
 
   // .single-product__body
 
@@ -182,6 +142,7 @@ const {
     transition: all 0.5s ease 0s;
     padding: 0px 0px calc(200 / 253 * 100%) 0px;
     margin: 0px 0px rem(20) 0px;
+    z-index: 1;
 
     img {
       object-fit: contain;
@@ -205,7 +166,7 @@ const {
   // .single-product__info
 
   &__info {
-    > *:last-child {
+    >*:last-child {
       margin-bottom: 0px;
     }
 
@@ -273,8 +234,7 @@ const {
 
   // .single-product__pricing
 
-  &__pricing {
-  }
+  &__pricing {}
 
   // .single-product__price
 
@@ -293,8 +253,7 @@ const {
 
   // .single-product__button
 
-  &__button {
-  }
+  &__button {}
 
   // .single-product__message
 

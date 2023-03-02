@@ -1,194 +1,195 @@
 <template>
-   <div class="fullscreen">
-      <Transition name="message">
+  <div class="fullscreen">
 
-         <div v-if="isWrongData" class="message message_same-user" >
-            <div class="message__body">
-               Не удалось войти по ввденным данным. Пожалуйста, введите правильные данные!
+    <Transition name="message">
+      <VAlert :position="'fixed'" :type="'same'" v-if="isWrongData">
+        Не удалось войти по ввденным данным. Пожалуйста, введите правильные
+        данные!
+      </VAlert>
+    </Transition>
+
+    <Transition name="message">
+      <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
+        Авторизация прошла успешно! Вас переведут на главную страницу !
+      </VAlert>
+    </Transition>
+
+    <Transition name="message">
+      <VAlert :position="'fixed'" :type="'error'" v-if="isLoginError">
+        {{ errorMessage }}
+      </VAlert>
+    </Transition>
+
+    <Transition name="message">
+      <VAlert
+        :position="'fixed'"
+        :type="'error'"
+        v-if="$route.query.isLoginRequired && isNotLogged"
+      >
+        Для доступа к данной странице ({{ $route.query.redirect }}) необходимо
+        авторизироваться !
+      </VAlert>
+    </Transition>
+
+    <div class="fullscreen__body">
+      <div class="fullscreen__content">
+        <div class="fullscreen__form-body">
+          <vForm
+            @submit="loginUser"
+            @invalid-submit="invalidSubmit"
+            :validation-schema="loginSchema"
+          >
+            <div class="action-form__title">Логин</div>
+
+            <div class="action-form__elements">
+              <div class="action-form__element">
+                <div class="action-form__input-body">
+                  <div class="action-form__placeholder">Email</div>
+                  <vField
+                    class="action-form__input"
+                    type="text"
+                    name="email"
+                    @focus="toggleFocus"
+                    @blur="toggleBlur"
+                  />
+                </div>
+                <FieldError class="action-form__error-msg" name="email" />
+              </div>
+
+              <div class="action-form__element">
+                <div class="action-form__input-body">
+                  <div class="action-form__placeholder">Пароль</div>
+                  <vField
+                    class="action-form__input"
+                    :type="fieldType"
+                    name="password"
+                    @focus="toggleFocus"
+                    @blur="toggleBlur"
+                  />
+                </div>
+
+                <div
+                  class="action-form__show-pass"
+                  @click="
+                    fieldType === 'password'
+                      ? (fieldType = 'text')
+                      : (fieldType = 'password')
+                  "
+                >
+                  Показать/скрыть пароль
+                </div>
+                <FieldError class="action-form__error-msg" name="password" />
+              </div>
+
+              <div class="action-form__input-wrapper">
+                <button
+                  class="action-form__btn"
+                  v-if="!isLoading"
+                  type="submit"
+                  :class="{ err: isInvalidFormSubmit }"
+                >
+                  Войти
+                </button>
+              </div>
             </div>
-         </div>
-      </Transition>
-      <Transition name="message">
-         <div v-if="isSuccess" class="message message_success" >
-            <div class="message__body">
-               Авторизация прошла успешно! Вас переведут на главную страницу !
-            </div>
-         </div>
-      </Transition>
-      <Transition name="message">
-         <div v-if="isErr" class="message message_error" >
-            <div class="message__body">
-               {{ errorMessage }}
-            </div>
-         </div>
-      </Transition>
+          </vForm>
 
-
-      <Transition name="message">
-         <div class="message message_error" v-if="$route.query.isLoginRequired && isNotL">
-            <div class="message__body">
-               Для доступа к данной странице ({{ $route.query.redirect }}) необходимо авторизироваться !
-            </div>
-         </div>
-      </Transition>
-
-
-      <div class="fullscreen__body">
-         <div class="fullscreen__content">
-            <div class="fullscreen__form-body">
-               <vForm @submit="submitForm" @invalid-submit="invalidSubmit" :validation-schema="loginSchema">
-                  <div class="action-form__title">Логин</div>
-
-                  <div class="action-form__elements">
-                     <div class="action-form__element">
-                        <div class="action-form__input-body">
-                           <div class="action-form__placeholder">Email</div>
-                           <vField class="action-form__input" type="text" name="email" @focus="toggleFocus"
-                              @blur="toggleBlur">
-                           </vField>
-                        </div>
-                        <ErrorMessage class="action-form__error-msg" name="email"></ErrorMessage>
-                     </div>
-
-                     <div class="action-form__element">
-                        <div class="action-form__input-body">
-                           <div class="action-form__placeholder">Пароль</div>
-                           <vField class="action-form__input" :type="fieldType" name="password" @focus="toggleFocus"
-                              @blur="toggleBlur">
-                           </vField>
-                        </div>
-
-                        <div class="action-form__show-pass"
-                           @click="fieldType === 'password' ? fieldType = 'text' : fieldType = 'password'">
-                           Показать/скрыть пароль
-                        </div>
-                        <ErrorMessage class="action-form__error-msg" name="password"></ErrorMessage>
-                     </div>
-
-                     <div class="action-form__input-wrapper">
-                        <button class="action-form__btn" v-if="!isLoading" type="submit" :class="{ err: isInvalidForm }">
-                           Войти
-                        </button>
-                     </div>
-                  </div>
-               </vForm>
-
-               <LoadingGif v-if="isLoading"></LoadingGif>
-            </div>
-            <RouterLink class="home-button" to="/">На главную</RouterLink>
-         </div>
+          <LoadingGif v-if="isLoading" />
+        </div>
+        <RouterLink class="home-button" to="/">На главную</RouterLink>
       </div>
-   </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
 
+import {
+  Form as vForm,
+  Field as vField,
+  ErrorMessage as FieldError,
+} from "vee-validate";
+
+import { useFormActions } from "../Composables/useFormActions";
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
-
-import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
-import { configure } from "vee-validate";
-
-import { ref, watch } from "vue";
-import { useUserAuthStore } from '../stores/userAuth.js';
-import { useRouter, useRoute } from 'vue-router';
+import { useUserAuthStore } from "../stores/userAuth.js";
 import { useUserCartStore } from "../stores/userCart";
 
+import { useRouter, useRoute } from "vue-router";
+
+
 import { fetchData } from "../api/fetchData";
-// Default values
-configure({
-   validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-   validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-   validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
-});
-
-
 const { fetchUserCartProducts } = useUserCartStore();
+
 
 const router = useRouter();
 const route = useRoute();
 
-const {
-   isErr,
-   loginSchema,
-   toggleBlur,
-   toggleFocus,
-   invalidSubmit,
-   isInvalidForm,
-} = useFormSchemas();
+const { loginSchema } = useFormSchemas();
 
+const { 
+  isInvalidFormSubmit, 
+  toggleBlur, 
+  toggleFocus,
+  invalidSubmit 
+} =  useFormActions();
 
-//Если пользователь нажал на корзину не авторизировавшись то закрываем это сообщение
-const isNotL = ref(true);
+//Если пользователь щашел на страницу где нужна авторизация не авторизировавшись, то
+// перекидываем на эту старнциу и показываем сообщение
+const isNotLogged = ref(true);
+
+watch(
+  () => route.query.redirect,
+  () => {
+    isNotLogged.value = true;
+    setTimeout(() => (isNotLogged.value = false), 2500);
+  },
+  { immediate: true }
+);
 //=================================================================================
-watch(() => route.query.redirect, () => {
-   isNotL.value = true;
-   setTimeout(() => isNotL.value = false, 2500);
-}, { immediate: true })
 
-
+const isLoginError = ref(false);
 const isWrongData = ref(false);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref("Произошла ошибка");
 const fieldType = ref("password");
 
-const submitForm = async (values) => {
+const loginUser = async (values) => {
+  isLoading.value = true;
 
-   isLoading.value = true;
+  let login = await fetchData("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json",
+    },
+    body: JSON.stringify(values),
+  });
 
+  console.log(login);
+  if (login.err) {
+    console.log(login.err);
+    errorMessage.value = login.err;
+    isLoginError.value = true;
+    setTimeout(() => (isLoginError.value = false), 3000);
+  } else if (login.noSuchUser) {
+    isWrongData.value = true;
+    setTimeout(() => (isWrongData.value = false), 3000);
+  } else if (login.token) {
+    const userAuthStore = useUserAuthStore();
+    userAuthStore.addUserToStorage(login);
+    isSuccess.value = true;
 
-   let login = await fetchData("/api/login", {
-      method: "POST",
-      headers: {
-         "Content-type": "application/json",
-      },
-      body: JSON.stringify(values),
-   });
-
-   console.log(login);
-
-
-
-   if (login.err) {
-      console.log(login.err);
-      errorMessage.value = login.err;
-      isErr.value = true;
-      setTimeout(() => isErr.value = false, 3000);
-
-   }
-   else if (login.noSuchUser) {
-      isWrongData.value = true;
-      setTimeout(() => isWrongData.value = false, 3000);
-   }
-
-   else if (login.token) {
-      const userAuthStore = useUserAuthStore();
-      userAuthStore.addUserToStorage(login);
-      isSuccess.value = true;
-
-      await fetchUserCartProducts();
-      setTimeout(() => {
-         router.push('/');
-         isSuccess.value = false;
-      }, 2000);
-
-   }
-
-   isLoading.value = false;
-
+    await fetchUserCartProducts();
+    setTimeout(() => {
+      router.push("/");
+      isSuccess.value = false;
+    }, 2000);
+  }
+  isLoading.value = false;
 };
-
-
-
-
-
-
-
-
-
-
 </script>
 
 <style lang="scss" scoped>

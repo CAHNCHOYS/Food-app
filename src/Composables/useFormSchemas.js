@@ -2,7 +2,7 @@ import { ref } from "vue";
 import * as yup from "yup";
 
 export const useFormSchemas = () => {
-  const isErr = ref(false);
+ 
 
   const userEditSchema = yup.object({
     email: yup
@@ -20,7 +20,7 @@ export const useFormSchemas = () => {
   });
 
   const registerSchema = yup.object({
-    username: yup
+    name: yup
       .string()
       .required("Поле обязательное для ввода")
       .min(4, "Поле должно иметь 4 символов минимум"),
@@ -30,7 +30,7 @@ export const useFormSchemas = () => {
       .email("Введите правильный email!"),
     phone: yup
       .string()
-      .required("")
+      .required("Поле обязательное для ввода")
       .min(6, "Введите правильный номер телефона")
       .max(18, "Слишком большой номер телефона"),
     password: yup
@@ -43,15 +43,7 @@ export const useFormSchemas = () => {
       .oneOf([yup.ref("password"), null], "Пароли должны совпадать"),
   });
 
-  const toggleFocus = ($event) => {
-    $event.target.closest(".action-form__input-body").classList.add("focused");
-  };
-
-  const toggleBlur = ($event) => {
-    $event.target
-      .closest(".action-form__input-body")
-      .classList.remove("focused");
-  };
+ 
 
   const loginSchema = yup.object({
     email: yup
@@ -63,14 +55,19 @@ export const useFormSchemas = () => {
       .required("Поле обязательное для ввода!")
       .min(4, "Поле должно иметь 4 символов минимум"),
   });
-  const isInvalidForm = ref(false);
 
-  const invalidSubmit = ({ values, errors, results }) => {
-    isInvalidForm.value = true;
-    setTimeout(() => {
-      isInvalidForm.value = false;
-    }, 800);
-  };
+
+  const searchSchema = yup.object({
+    search: yup
+      .string()
+      .required("Поле обязательное для ввода")
+      .min(1, "Поле должно содержать больше символов"),
+    categories: yup
+      .array()
+      .required("Выберете хотя бы одну категорию")
+      .min(1, "Выберете хотя бы одну категорию"),
+  });
+  
 
   const orderSchemaCashByCourier = yup.object({
     phone: yup
@@ -226,12 +223,9 @@ export const useFormSchemas = () => {
 
   return {
     registerSchema,
-    toggleBlur,
-    toggleFocus,
-    isErr,
+    searchSchema,
+
     loginSchema,
-    invalidSubmit,
-    isInvalidForm,
     orderSchemaCashByCourier,
     orderSchemaCashBySelf,
     orderShemaCardByCourier,

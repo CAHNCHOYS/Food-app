@@ -2,8 +2,16 @@
   <div class="products-slider">
     <div class="products-slider__by-type" v-if="productsByType.length">
       <div class="products-slider__by-type-body">
-        <swiper :modules="[Pagination]" v-bind="swiperSettings" class="products-slider__slider">
-          <swiper-slide class="product-slider__slide" v-for="product in productsByType" :key="product.product_id">
+        <swiper
+          :modules="[Pagination]"
+          v-bind="productSliderSettings"
+          class="products-slider__slider"
+        >
+          <swiper-slide
+            v-for="product in productsByType"
+            :key="product.product_id"
+            class="product-slider__slide"
+          >
             <SingleProduct :product="product" />
           </swiper-slide>
 
@@ -13,21 +21,25 @@
     </div>
 
     <div class="products-slider__by-category" v-if="productsByCategory.length">
-      <swiper :modules="[Pagination]" v-bind="swiperSettingsCirle" class="products-slider__slider">
-        <swiper-slide class="product-slider__slide" v-for="product in productsByCategory" :key="product.product_id">
+      <swiper
+        :modules="[Pagination]"
+        v-bind="productSettingsCirle"
+        class="products-slider__slider"
+      >
+        <swiper-slide
+          v-for="product in productsByCategory"
+          :key="product.product_id"
+          class="product-slider__slide"
+        >
           <SingleProduct :is-circle-product="true" :product="product" />
         </swiper-slide>
         <div class="products-slider__pagination"></div>
       </swiper>
     </div>
     <p v-else-if="!productType">Нет рекомендуемых товаров для данного (</p>
-    
 
-
-    <LoadingGif :bg-color="'gray'" v-if="isLoading"> </LoadingGif>
-
-    <VErrorMessage v-if="isErr" :err-message="loadErrorMessage">
-    </VErrorMessage>
+    <LoadingGif :bg-color="'gray'" v-if="isLoading" />
+    <VErrorMessage v-if="isErr" :err-message="loadErrorMessage" />
   </div>
 </template>
 
@@ -39,6 +51,7 @@ import { onMounted, ref, watch } from "vue";
 import { Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
+import { useSlidersSettings } from "../Composables/useSlidersSettings.js";
 //-------------------------------------------------------------------
 //api----------------------------------------------------------------
 import { fetchData } from "../api/fetchData";
@@ -49,68 +62,7 @@ const props = defineProps({
   recommendedProducts: String,
 });
 
-//Найстроки свайпера для обычных товаров
-const swiperSettings = {
-  slidesPerView: 3,
-  spaceBetween: 30,
-
-  navigation: {
-    clickable: true,
-    prevEl: ".products-slider__arrow.icon-arrow-left",
-    nextEl: ".products-slider__arrow.icon-arrow-right",
-  },
-  pagination: {
-    clickable: true,
-    el: ".products-slider__pagination",
-  },
-  breakpoints: {
-    0: {
-      slidesPerView: 1,
-    },
-    420: {
-      spaceBetween: 15,
-      slidesPerView: 2,
-    },
-
-    1300: {
-      spaceBetween: 30,
-      slidesPerView: 3,
-    },
-  },
-};
-
-//Свайпер для товаров с круглой картинокй 
-const swiperSettingsCirle = {
-  slidesPerView: 3,
-  spaceBetween: 30,
-
-  navigation: {
-    clickable: true,
-    prevEl: ".products-slider__arrow.icon-arrow-left",
-    nextEl: ".products-slider__arrow.icon-arrow-right",
-  },
-  pagination: {
-    clickable: true,
-    el: ".products-slider__pagination",
-  },
-  breakpoints: {
-    0: {
-      slidesPerView: 1,
-      spaceBetween: 0,
-    },
-    420: {
-      spaceBetween: 30,
-      slidesPerView: 2,
-    },
-    1000: {
-      slidesPerView: 3,
-    },
-
-    1700: {
-      spaceBetween: 100,
-    },
-  },
-};
+const { productSliderSettings, productSettingsCirle } = useSlidersSettings();
 
 const isLoading = ref(false);
 const productsByType = ref([]);
@@ -121,17 +73,16 @@ const loadErrorMessage = ref("Произошла ошибка при  загру
 onMounted(async () => {
   isLoading.value = true;
   if (!props.recommendedProducts && props.productType) {
+    let getProducts = await fetchData(
+      `/api/productsByType/${props.productType}`
+    );
 
-    let getProducts = await fetchData(`/api/productsByType/${props.productType}`)
-  
     console.log(getProducts);
-
     if (getProducts.length) {
       productsByType.value = getProducts;
     }
 
     if (getProducts.err) {
-
       loadErrorMessage.value = getProducts.err;
       console.log(getProducts.err);
       isErr.value = true;
@@ -140,13 +91,10 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-
 function randomInteger(min, max) {
-  // получить случайное число от (min-0.5) до (max+0.5)
   let rand = min - 0.5 + Math.random() * (max - min + 1);
   return Math.round(rand);
 }
-
 
 //Получение товаров по категории
 watch(
@@ -160,13 +108,13 @@ watch(
       //Если категорий несколько выбираем случайную
       if (props.recommendedProducts.split(",").length > 0) {
         let splitted = props.recommendedProducts.split(",");
-        let start = 0;
-        let end = splitted.length - 1;
-        categoryToGet = splitted[randomInteger(start, end)].trim();
+        categoryToGet = splitted[randomInteger(0, splitted.length - 1)].trim();
         console.log(categoryToGet);
       } else categoryToGet = props.recommendedProducts.trim();
 
-      const recommendedProducts = await fetchData(`/api/categories/${categoryToGet}/10`);
+      const recommendedProducts = await fetchData(
+        `/api/categories/${categoryToGet}/10`
+      );
 
       if (recommendedProducts.err) {
         isErr.value = true;
@@ -306,7 +254,8 @@ watch(
 
   // .products-slider__by-category
 
-  &__by-category {}
+  &__by-category {
+  }
 }
 
 .swiper {

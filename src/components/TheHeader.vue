@@ -2,7 +2,7 @@
    <header class="header">
       <div class="header__row">
          <div class="header__info-col" v-if="windowStore.getSize > 767">
-            <VSiteInfo></VSiteInfo>
+            <VSiteInfo /> 
          </div>
 
          <router-link @click="removeMobileMenu" to="/" class="header__logo" v-if="windowStore.getSize <= 767">
@@ -54,7 +54,7 @@
 
                   <div class="header__search">
                      <slide-up-down v-model="isFormToggled" :duration="800">
-                        <SearchForm class="header__search-form"></SearchForm>
+                        <SearchForm class="header__search-form" />
                      </slide-up-down>
                   </div>
 
@@ -68,7 +68,7 @@
             <div class="header__search-icon icon-search" @click="isFormToggled = !isFormToggled"></div>
             <div class="header__search">
                <slide-up-down v-model="isFormToggled" :duration="800">
-                  <SearchForm @close-form="isFormToggled = false" class="header__search-form"></SearchForm>
+                  <SearchForm @close-form="isFormToggled = false" class="header__search-form" />
                </slide-up-down>
             </div>
          </div>
@@ -92,10 +92,6 @@ import { useWindowSizeStore } from "../stores/windowSize";
 import { useUserAuthStore } from "../stores/userAuth";
 import { onMounted, ref } from "vue";
 
-
-
-
-
 const windowStore = useWindowSizeStore();
 const userAuthStore = useUserAuthStore();
 
@@ -113,12 +109,6 @@ const removeMobileMenu = () => {
    document.body.classList.remove("_isLocked");
    toggleMobileMenu.value = false;
 }
-
-
-
-
-
-
 
 
 onMounted(() => {

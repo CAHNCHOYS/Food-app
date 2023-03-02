@@ -28,7 +28,7 @@
 
       <div class="user-account__edit" v-show="isUserEditing">
         <vForm
-          @submit="formSubmit"
+          @submit="updateInfo"
           class="user-account__edit-form edit-form"
           :validation-schema="userEditSchema"
           :initial-values="initialValues"
@@ -41,10 +41,7 @@
                 type="text"
                 class="edit-form__element-input"
               ></vField>
-              <ErrorMessage
-                name="email"
-                class="edit-form__wrong-data"
-              ></ErrorMessage>
+              <FieldError name="email" class="edit-form__wrong-data" />
             </div>
             <div class="edit-form__element">
               <div class="edit-form__element-title">Имя</div>
@@ -53,10 +50,7 @@
                 type="text"
                 class="edit-form__element-input"
               ></vField>
-              <ErrorMessage
-                name="name"
-                class="edit-form__wrong-data"
-              ></ErrorMessage>
+              <FieldError name="name" class="edit-form__wrong-data" />
             </div>
 
             <div class="edit-form__element">
@@ -66,10 +60,7 @@
                 type="text"
                 class="edit-form__element-input"
               ></vField>
-              <ErrorMessage
-                name="phone"
-                class="edit-form__wrong-data"
-              ></ErrorMessage>
+              <FieldError name="phone" class="edit-form__wrong-data" />
             </div>
 
             <div class="edit-form__element" v-show="isUserEditing">
@@ -89,13 +80,12 @@
               </Transition>
             </div>
 
-            <LoadingGif v-if="isLoading" class="edit-form__loading">
-            </LoadingGif>
+            <LoadingGif v-if="isLoading" class="edit-form__loading" />
+
             <VErrorMessage
               :error-message="`Ошибка при обновлении информации`"
               v-if="isError"
-            >
-            </VErrorMessage>
+            />
           </div>
         </vForm>
       </div>
@@ -116,8 +106,8 @@
     </div>
 
     <div class="user-account__no-user" v-else>
-         Не удалось получить данные о пользователе
-      </div>
+      Не удалось получить данные о пользователе
+    </div>
   </div>
 </template>
 
@@ -125,8 +115,7 @@
 import {
   Form as vForm,
   Field as vField,
-  ErrorMessage,
-  configure,
+  ErrorMessage as FieldError,
 } from "vee-validate";
 import { ref } from "vue";
 
@@ -136,14 +125,6 @@ import { useRouter } from "vue-router";
 import { useUserAuthStore } from "../stores/userAuth";
 import { computed } from "@vue/reactivity";
 
-// Default values
-configure({
-  validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
-  validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-  validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
-  validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
-});
-
 const { userEditSchema } = useFormSchemas();
 
 const userAuthStore = useUserAuthStore();
@@ -152,9 +133,11 @@ const isUserEditing = ref(false);
 const isLoading = ref(false);
 const isError = ref(false);
 const isSuccess = ref(false); //Сообщение при изменении информации о пользователе
+
 const updateErrorMessage = ref(
   "Произошла ошибка при обновлении информации о вас(!"
 );
+
 
 const logOut = () => {
   if (window.confirm("Вы уверены что хотите выйти с аккаунта?")) {
@@ -163,7 +146,8 @@ const logOut = () => {
   }
 };
 
-const formSubmit = async (values) => {
+
+const updateInfo = async (values) => {
   isLoading.value = true;
   let res = await userAuthStore.updateUserInfo(values);
   if (res.isUpdated) {
@@ -173,7 +157,7 @@ const formSubmit = async (values) => {
       isUserEditing.value = false;
     }, 2500);
   } else if (res.err) {
-    updateErrorMessage.value = res.err.message || res.err.sqlMessage;
+    updateErrorMessage.value = res.err;
     isError.value = true;
     setTimeout(() => (isError.value = false), 5000);
   }
@@ -188,6 +172,8 @@ const initialValues = computed(() => {
     phone: userAuthStore.currentUser.phone,
   };
 });
+
+
 </script>
 
 <style lang="scss" scoped>

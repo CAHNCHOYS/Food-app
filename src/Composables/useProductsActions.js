@@ -46,13 +46,10 @@ export const useProductsActions = () => {
     }
 
     if (addedProduct.err) {
-      if (addedProduct.err.name) {
-        actionErrorMessage.value = "Произошла ошибка при отправке запроса";
-      } else
-        actionErrorMessage.value =
-          "Ошбика на сервере при добавлении товара в корзину!";
-
       console.log(addedProduct.err);
+      actionErrorMessage.value = addedProduct.err;
+     
+ 
       isAddProductError.value = true;
       setTimeout(() => (isAddProductError.value = false), 2500);
     }
@@ -77,9 +74,10 @@ export const useProductsActions = () => {
     isAlreadyInCart,
     isAddProductError,
     isProductAdded,
+    isDeleteError,
+
+    actionErrorMessage,
     addProductAction,
     deleteProductAction,
-    isDeleteError,
-    actionErrorMessage,
   };
 };

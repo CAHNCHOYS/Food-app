@@ -88,9 +88,8 @@ export const useUserAuthStore = defineStore("userAuth", () => {
       } else if (loginAgain.token) {
         addUserToStorage(loginAgain);
         return { isUpdated: true };
-      } else {
-        return { done: false };
-      }
+      } 
+      
     }
   }
 
