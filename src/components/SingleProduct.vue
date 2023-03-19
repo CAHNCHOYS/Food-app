@@ -5,42 +5,41 @@
         <VAlert :position="'absolute'" :type="'success'" v-if="isProductAdded">
           Товар добавлен в корзину!
         </VAlert>
-        
       </Transition>
 
       <Transition name="product-message">
         <VAlert :position="'absolute'" :type="'error'" v-if="isAddProductError">
           {{ actionErrorMessage }}
         </VAlert>
-     
       </Transition>
 
       <Transition name="product-message">
-        <VAlert :position="'absolute'" :type="'same'" v-if="isAlreadyInCart">
-          Упс, товар уже находится в корзине!
-        </VAlert>
-
-      </Transition>
-
-      <Transition name="product-message">
-        <VAlert :position="'absolute'" :type="'error'" v-if="isNotLoggedUser">
+        <VAlert :position="'absolute'" :type="'info'" v-if="isNotLoggedUser">
           Для добавления товара нужно сначала авторизироваться!
         </VAlert>
-
       </Transition>
 
       <div class="single-product__body">
-        <RouterLink :to="`/Products/${product.name}/${product.product_id}`" :class="{ circle: isCircleProduct }"
-          class="single-product__image _ibg">
-          <img v-lazy="{
-            src: `https://sushi-backend-henna.vercel.app/Products/${product.image}`,
-            loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
-            error: 'https://sushi-backend-henna.vercel.app/Err.png',
-          }" :alt="product.product_name" />
+        <RouterLink
+          :to="`/Products/${product.name}/${product.product_id}`"
+          :class="{ circle: isCircleProduct }"
+          class="single-product__image _ibg"
+        >
+          <img
+            v-lazy="{
+              src: `https://sushi-backend-henna.vercel.app/Products/${product.image}`,
+              loading: 'https://sushi-backend-henna.vercel.app/Load.gif',
+              error: 'https://sushi-backend-henna.vercel.app/Err.png',
+            }"
+            :alt="product.product_name"
+          />
         </RouterLink>
 
         <div class="single-product__info" :class="{ center: isCircleProduct }">
-          <RouterLink :to="`/Products/${product.name}/${product.product_id}`" class="single-product__name">
+          <RouterLink
+            :to="`/Products/${product.name}/${product.product_id}`"
+            class="single-product__name"
+          >
             {{ product.name }}
           </RouterLink>
           <div class="single-product__size" v-if="!isCircleProduct">
@@ -49,28 +48,40 @@
         </div>
       </div>
 
-      <div v-show="!isActionLoading" class="single-product__actions" :class="{ border: !isCircleProduct }">
+      <div
+        v-show="!isActionLoading"
+        class="single-product__actions"
+        :class="{ border: !isCircleProduct }"
+      >
         <div class="single-product__pricing">
           <div class="single-product__price">{{ product.Price }}₽</div>
           <div class="single-product__old-price" v-if="product.oldPrice">
             {{ product.oldPrice }}₽
           </div>
         </div>
-        <div class="single-product__button" >
-          <button class="btn icon-cart"  v-show="!isActionLoading" :disabled="isNotLoggedUser" @click="
-            addProductAction({
-              name: product.name,
-              product_id: product.product_id,
-              image: product.image,
-              Price: product.Price,
-            })
-          ">
+        <div class="single-product__button">
+          <button
+            class="btn icon-cart"
+            v-show="!isActionLoading"
+            :disabled="isNotLoggedUser"
+            @click="
+              addProductAction({
+                name: product.name,
+                product_id: product.product_id,
+                image: product.image,
+                Price: product.Price,
+              })
+            "
+          >
             Хочу!
           </button>
         </div>
       </div>
 
-      <LoadingGif class="single-product__action-loading" v-show="isActionLoading" />
+      <LoadingGif
+        class="single-product__action-loading"
+        v-show="isActionLoading"
+      />
     </div>
   </article>
 </template>
@@ -93,7 +104,6 @@ const {
   isNotLoggedUser,
   isAddProductError,
   isActionLoading,
-  isAlreadyInCart,
   isProductAdded,
 
   addProductAction,
@@ -124,7 +134,8 @@ const {
 
   // .single-product__action-loading
 
-  &__action-loading {}
+  &__action-loading {
+  }
 
   // .single-product__body
 
@@ -166,7 +177,7 @@ const {
   // .single-product__info
 
   &__info {
-    >*:last-child {
+    > *:last-child {
       margin-bottom: 0px;
     }
 
@@ -234,7 +245,8 @@ const {
 
   // .single-product__pricing
 
-  &__pricing {}
+  &__pricing {
+  }
 
   // .single-product__price
 
@@ -253,7 +265,8 @@ const {
 
   // .single-product__button
 
-  &__button {}
+  &__button {
+  }
 
   // .single-product__message
 

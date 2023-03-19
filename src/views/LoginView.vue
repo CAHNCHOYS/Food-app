@@ -1,13 +1,5 @@
 <template>
   <div class="fullscreen">
-
-    <Transition name="message">
-      <VAlert :position="'fixed'" :type="'same'" v-if="isWrongData">
-        Не удалось войти по ввденным данным. Пожалуйста, введите правильные
-        данные!
-      </VAlert>
-    </Transition>
-
     <Transition name="message">
       <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
         Авторизация прошла успешно! Вас переведут на главную страницу !
@@ -20,22 +12,11 @@
       </VAlert>
     </Transition>
 
-    <Transition name="message">
-      <VAlert
-        :position="'fixed'"
-        :type="'error'"
-        v-if="$route.query.isLoginRequired && isNotLogged"
-      >
-        Для доступа к данной странице ({{ $route.query.redirect }}) необходимо
-        авторизироваться !
-      </VAlert>
-    </Transition>
-
     <div class="fullscreen__body">
       <div class="fullscreen__content">
         <div class="fullscreen__form-body">
           <vForm
-            @submit="loginUser"
+            @submit="loginSubmit"
             @invalid-submit="invalidSubmit"
             :validation-schema="loginSchema"
           >
@@ -81,7 +62,7 @@
                 <FieldError class="action-form__error-msg" name="password" />
               </div>
 
-              <div class="action-form__input-wrapper">
+              <div class="action-form__btns">
                 <button
                   class="action-form__btn"
                   v-if="!isLoading"
@@ -103,7 +84,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watchEffect } from "vue";
 
 import {
   Form as vForm,
@@ -119,67 +100,38 @@ import { useUserCartStore } from "../stores/userCart";
 
 import { useRouter, useRoute } from "vue-router";
 
+import { login } from "../api/users";
 
-import { fetchData } from "../api/fetchData";
 const { fetchUserCartProducts } = useUserCartStore();
-
 
 const router = useRouter();
 const route = useRoute();
 
 const { loginSchema } = useFormSchemas();
 
-const { 
-  isInvalidFormSubmit, 
-  toggleBlur, 
-  toggleFocus,
-  invalidSubmit 
-} =  useFormActions();
-
-//Если пользователь щашел на страницу где нужна авторизация не авторизировавшись, то
-// перекидываем на эту старнциу и показываем сообщение
-const isNotLogged = ref(true);
-
-watch(
-  () => route.query.redirect,
-  () => {
-    isNotLogged.value = true;
-    setTimeout(() => (isNotLogged.value = false), 2500);
-  },
-  { immediate: true }
-);
-//=================================================================================
+const { isInvalidFormSubmit, toggleBlur, toggleFocus, invalidSubmit } =
+  useFormActions();
 
 const isLoginError = ref(false);
-const isWrongData = ref(false);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref("Произошла ошибка");
+
 const fieldType = ref("password");
 
-const loginUser = async (values) => {
+const loginSubmit = async (values) => {
   isLoading.value = true;
 
-  let login = await fetchData("/api/login", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(values),
-  });
+  let loginResult = await login(values);
 
-  console.log(login);
-  if (login.err) {
-    console.log(login.err);
-    errorMessage.value = login.err;
+  console.log(loginResult);
+  if (loginResult.err) {
+    errorMessage.value = loginResult.err;
     isLoginError.value = true;
     setTimeout(() => (isLoginError.value = false), 3000);
-  } else if (login.noSuchUser) {
-    isWrongData.value = true;
-    setTimeout(() => (isWrongData.value = false), 3000);
-  } else if (login.token) {
+  } else if (loginResult.token) {
     const userAuthStore = useUserAuthStore();
-    userAuthStore.addUserToStorage(login);
+    userAuthStore.addTokenToStorage(loginResult);
     isSuccess.value = true;
 
     await fetchUserCartProducts();
@@ -190,8 +142,19 @@ const loginUser = async (values) => {
   }
   isLoading.value = false;
 };
+
+//Если пользователь щашел на страницу где нужна авторизация не авторизировавшись, то
+// перекидываем на эту старнциу и показываем сообщение
+watchEffect(() => {
+  if (route.query.redirect) {
+    isLoginError.value = true;
+    errorMessage.value = `Для доступа к данной странице ( ${route.query.redirect}) необходимо
+        авторизироваться !`;
+    setTimeout(() => (isLoginError.value = false), 2500);
+  }
+});
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/LoginRegister.scss";
+@import "@/assets/scss/LoginRegister.scss";
 </style>

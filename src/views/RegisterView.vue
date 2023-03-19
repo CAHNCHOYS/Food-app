@@ -1,10 +1,6 @@
 <template>
   <div class="fullscreen">
-    <Transition name="message">
-      <VAlert :position="'fixed'" :type="'same'" v-if="isSameUser">
-        Упс, пользователь с такой же почтой уже существует (
-      </VAlert>
-    </Transition>
+ 
 
     <Transition name="message">
       <VAlert :position="'fixed'" :type="'error'" v-if="isRegistrationError">
@@ -22,7 +18,7 @@
       <div class="fullscreen__content">
         <div class="fullscreen__form-body">
           <vForm
-            @submit="registerUser"
+            @submit="registerSubmit"
             @invalid-submit="invalidSubmit"
             class="fullscreen__form action-form"
             :validation-schema="registerSchema"
@@ -143,7 +139,6 @@
 
 <script setup>
 import { ref } from "vue";
-
 import { useFormSchemas } from "../Composables/useFormSchemas";
 import { useFormActions } from "../Composables/useFormActions";
 import {
@@ -152,7 +147,7 @@ import {
   ErrorMessage as FieldError,
 } from "vee-validate";
 
-import { fetchData } from "../api/fetchData";
+import { register } from "../api/users";
 const { registerSchema } = useFormSchemas();
 
 const {
@@ -165,7 +160,6 @@ const {
 
 const isRegistrationError = ref(false);
 const isSuccess = ref(false);
-const isSameUser = ref(false); // Если введенные данные уже есть в базе данных
 const isLoading = ref(false);
 
 const userCanGoToLogin = ref(false);
@@ -177,35 +171,26 @@ const updateCity = (city) => {
   selectedCity.value = city;
 };
 
-const registerUser = async (values, { resetForm }) => {
+const registerSubmit = async (values, { resetForm }) => {
   isLoading.value = true;
 
   let userData = {
     ...values,
     city: selectedCity.value,
   };
+  
 
-  const registeredUser = await fetchData("/api/register", {
-    method: "POST",
-    headers: {
-      "Content-type": "application/json",
-    },
-    body: JSON.stringify(userData),
-  });
+  const registerResult = await register(userData);
 
-  console.log(registeredUser);
-  if (registeredUser.isSuccess) {
+  console.log(registerResult);
+  if (registerResult.isSuccess) {
     isSuccess.value = true;
     setTimeout(() => (isSuccess.value = false), 3000);
     resetForm();
     userCanGoToLogin.value = true;
-  } else if (registeredUser.isSameUser) {
-    isSameUser.value = true;
-
-    setTimeout(() => (isSameUser.value = false), 3000);
-  } else if (registeredUser.err) {
-    console.log(registeredUser.err);
-    registerErrorMessage.value = registeredUser.err;
+  } else if (registerResult.err) {
+    console.log(registerResult.err);
+    registerErrorMessage.value = registerResult.err;
     isRegistrationError.value = true;
     setTimeout(() => (isRegistrationError.value = false), 3000);
   }
@@ -216,7 +201,7 @@ const registerUser = async (values, { resetForm }) => {
 
 <style lang="scss" scoped>
 @import "@/assets/adaptive-value.scss";
-@import "@/assets/LoginRegister.scss";
+@import "@/assets/scss/LoginRegister.scss";
 
 .login-btn-leave-active,
 .login-btn-enter-active {

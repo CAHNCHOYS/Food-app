@@ -2,7 +2,8 @@ import { onMounted, ref, watchEffect } from "vue";
 
 import { useUserAuthStore } from "../stores/userAuth";
 
-import { fetchData } from "../api/fetchData.js";
+import {getAllReviews, addReview} from "../api/reviews.js";
+
 
 export const useReviewsActions = () => {
   const userAuthStore = useUserAuthStore();
@@ -23,16 +24,8 @@ export const useReviewsActions = () => {
     if (userAuthStore.checkIfUserLogged) {
       review.user_id = userAuthStore.currentUser.id;
 
-      const addedReview = await fetchData(`/api/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(review),
-      });
+      const addedReview = await addReview();
 
-
-      
       if (addedReview.err) {
         console.log(addedReview.err);
         isAddError.value = true;
@@ -63,7 +56,7 @@ export const useReviewsActions = () => {
 
   onMounted(async () => {
     isFetchingLoading.value = true;
-    const reviewsFetch = await fetchData(`/api/reviews`);
+    const reviewsFetch = await getAllReviews();
 
     console.log(reviewsFetch);
     if (reviewsFetch.length) {
@@ -82,12 +75,12 @@ export const useReviewsActions = () => {
     reviews,
     isFetchingLoading,
     isError,
-    addReviewItem,
     isUserNotLogged,
     isReviewAdded,
     isAddError,
     errorMessage,
     isReviewAdding,
     addErrorMessage,
+    addReviewItem,
   };
 };

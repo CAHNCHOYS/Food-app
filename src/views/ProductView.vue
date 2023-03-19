@@ -76,13 +76,7 @@
             </Transition>
 
             <Transition name="product-message">
-              <VAlert :position="'static'" :type="'same'" v-if="isAlreadyInCart">
-                Упс, товар уже находится в корзине!
-              </VAlert>
-            </Transition>
-
-            <Transition name="product-message">
-              <VAlert :position="'static'" :type="'error'" v-if="isNotLoggedUser">
+              <VAlert :position="'static'" :type="'info'" v-if="isNotLoggedUser">
                 Для добавления товара в корзину необходимо сначала войти в
                 аккаунт!
               </VAlert>
@@ -122,7 +116,6 @@ const { isFetchError, isProductLoading, pageProduct, errorMessage } =
 const {
   isActionLoading,
   isNotLoggedUser,
-  isAlreadyInCart,
   isProductAdded,
   actionErrorMessage,
   isAddProductError,

@@ -51,7 +51,7 @@ import { onMounted, ref, watch } from "vue";
 import { Pagination } from "swiper";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useSlidersSettings } from "../Composables/useSlidersSettings.js";
+
 //-------------------------------------------------------------------
 //api----------------------------------------------------------------
 import { fetchData } from "../api/fetchData";
@@ -61,8 +61,6 @@ const props = defineProps({
   productType: String,
   recommendedProducts: String,
 });
-
-const { productSliderSettings, productSettingsCirle } = useSlidersSettings();
 
 const isLoading = ref(false);
 const productsByType = ref([]);
@@ -130,6 +128,69 @@ watch(
   },
   { immediate: true }
 );
+
+const productSliderSettings = {
+  slidesPerView: 3,
+  spaceBetween: 30,
+
+  navigation: {
+    clickable: true,
+    prevEl: ".products-slider__arrow.icon-arrow-left",
+    nextEl: ".products-slider__arrow.icon-arrow-right",
+  },
+  pagination: {
+    clickable: true,
+    el: ".products-slider__pagination",
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 1,
+    },
+    420: {
+      spaceBetween: 15,
+      slidesPerView: 2,
+    },
+
+    1300: {
+      spaceBetween: 30,
+      slidesPerView: 3,
+    },
+  },
+};
+
+//Свайпер для товаров с круглой картинокй
+const productSettingsCirle = {
+  slidesPerView: 3,
+  spaceBetween: 30,
+
+  navigation: {
+    clickable: true,
+    prevEl: ".products-slider__arrow.icon-arrow-left",
+    nextEl: ".products-slider__arrow.icon-arrow-right",
+  },
+  pagination: {
+    clickable: true,
+    el: ".products-slider__pagination",
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 1,
+      spaceBetween: 0,
+    },
+    420: {
+      spaceBetween: 30,
+      slidesPerView: 2,
+    },
+    1000: {
+      slidesPerView: 3,
+    },
+
+    1700: {
+      slidesPerView: 3,
+      spaceBetween: 80,
+    },
+  },
+};
 </script>
 
 <style lang="scss">

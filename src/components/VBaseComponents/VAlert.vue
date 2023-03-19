@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <div class="message" :class="positionType">
-      <div class="message__body" :class="messageColorType">
-        <slot></slot>
-      </div>
+  <div class="message" :class="positionType">
+    <div class="message__body" :class="messageColorType">
+      <slot></slot>
     </div>
   </div>
 </template>
@@ -31,7 +29,7 @@ const positionType = computed(() => ({
 const messageColorType = computed(() => ({
   success: props.type === "success",
   error: props.type === "error",
-  same: props.type === "same",
+  info: props.type === "info",
 }));
 </script>
 
@@ -66,22 +64,25 @@ const messageColorType = computed(() => ({
   }
 
   &.static {
-    margin: rem(15) 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
     width: 100%;
-    border-radius: rem(10);
+    .message__body {
+      background-color: unset !important;
+      color: crimson !important;
+      padding: 0px 0px 0px 0px;
+    }
   }
-
-
 
   // .message__body
 
   &__body {
     position: relative;
     z-index: 100;
-    padding: rem(10);
+    padding: rem(20);
     font-size: rem(20);
+    line-height: 1.3;
 
-    &.same {
+    &.info {
       background-color: rgb(33, 168, 252);
       color: white;
     }

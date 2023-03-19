@@ -41,13 +41,11 @@ onMounted(async () => {
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
   window.addEventListener("resize", checkSize);
 
-  await userAuthStore.verifyTokenStore();
+  await userAuthStore.verifyUserToken();
   //Получение товаров в корзине
   if (userAuthStore.checkIfUserLogged) {
     await userCartStore.fetchUserCartProducts();
   }
-
- 
  isSiteLoading.value = false;
 });
 
@@ -68,10 +66,7 @@ onUnmounted(() => {
 
 @import "@/assets/Ui.scss";
 
-.test {
-  font-weight: 200;
-  font-size: 24px;
-}
+
 
 html {
   scrollbar-width: thin;
@@ -111,7 +106,7 @@ body {
 }
 
 .container {
-  //Если верстка с исп относительных единиц
+ 
 
   //Если нет
   max-width: 1200px;
@@ -130,58 +125,7 @@ body {
   }
 }
 
-//---------------------------------------------
 
-//Адаптивные изображения-------------------
-._ibg {
-  position: relative;
-
-  img {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    object-fit: cover;
-  }
-
-  &_c {
-    img {
-      object-fit: contain;
-    }
-  }
-}
-
-img[lazy=loading]{
-  object-fit: contain;
-  height: 70%;
-  width: 70%;
-  left: 50%;
-  top: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-
-
-.bg-image {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-//-------------------------------------
-//Фикс свайпера во влексах
-* {
-  min-width: 0;
-}
 
 
 </style>

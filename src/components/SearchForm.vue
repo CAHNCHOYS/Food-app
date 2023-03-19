@@ -95,14 +95,11 @@ import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useRouter } from "vue-router";
 
-
-
 const emit = defineEmits(["closeForm"]);
 
 const { searchSchema } = useFormSchemas();
 
 const router = useRouter();
-
 
 const searcProducts = (values) => {
   console.log(values);

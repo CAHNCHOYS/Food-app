@@ -60,12 +60,21 @@ import { Pagination, EffectFlip } from "swiper";
 import "swiper/css/effect-flip";
 import "swiper/css";
 import "swiper/css/pagination";
-import { useSlidersSettings } from "@/Composables/useSlidersSettings.js";
+
 //-------------------------------------------------------------------
 
-const { mainSliderSettings } = useSlidersSettings();
 
 
+  const mainSliderSettings = {
+    pagination: {
+      clickable: true,
+      el: ".main-slider__pagination",
+    },
+    effect: "flip",
+    grabCursor: true,
+    speed: 1000,
+    autoHeight: true,
+  };
 
 
 </script>

@@ -25,12 +25,12 @@
 
   &__content {
     flex: 1 1 auto;
-    padding: 87px 92px;
-    max-width: rem(458);
+    padding: rem(80) rem(65);
+    max-width: rem(500);
     background-color: white;
     border-radius: rem(30);
     @media (max-width: #{$tablet+px}) {
-      padding: 50px 45px;
+      padding: rem(30);
     }
   }
 
@@ -59,7 +59,7 @@
   &__elements {
     display: flex;
     flex-direction: column;
-    row-gap: 10px;
+    row-gap: 15px;
   }
 
   // .action-form__input-body

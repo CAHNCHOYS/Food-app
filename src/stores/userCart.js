@@ -2,17 +2,17 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useUserAuthStore } from "./userAuth.js";
 
-import { fetchData } from "../api/fetchData.js";
+import {
+  getUserCartProducts,
+} from "../api/products.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
- 
   const userAuthStore = useUserAuthStore();
 
   const cartItems = ref([]);
   const isFetchingLoading = ref(false);
   const isCartProductsErr = ref(false);
   const loadErrorMessage = ref("Произошла ошибка при загрузке товаров корзины");
-
 
   const isPromoActive = ref(false);
   function updateUserPromo(promo) {
@@ -21,26 +21,22 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
- 
   async function fetchUserCartProducts() {
     if (userAuthStore.currentUser.id) {
       cartItems.value = [];
       isFetchingLoading.value = true;
 
-      const userCartProducts = await fetchData(
-        `/api/cartProducts/${+userAuthStore.currentUser.id}`
+      const userCartProducts = await getUserCartProducts(
+        userAuthStore.currentUser.id
       );
 
       if (userCartProducts.length) {
         cartItems.value = userCartProducts;
       } else if (userCartProducts.err) {
         loadErrorMessage.value = userCartProducts.err;
-
         console.log(userCartProducts.err);
-        
         isCartProductsErr.value = true;
       }
-
       isFetchingLoading.value = false;
     }
   }
@@ -73,29 +69,7 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-  async function addProductToCart(product) {
-    if (userAuthStore.checkIfUserLogged) {
-      if (!product.count) {
-        product.count = 1;
-      }
-      const addedProduct = await fetchData(`/api/cartProducts`, {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          product_id: product.product_id,
-          user_id: userAuthStore.currentUser.id,
-          count: product.count,
-        }),
-      });
-
-      return addedProduct;
-    } else
-      return {
-        isUserNotLogged: true,
-      };
-  }
+  
 
   function updateUserCart(product, method = "remove") {
     if (method.toLowerCase() === "add") {
@@ -108,20 +82,6 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-  async function deleteProductFromCart(product) {
-    const deleteProductFetch = await fetchData(`/api/cartProducts`, {
-      method: "DELETE",
-      headers: {
-        "Content-type": "application/json",
-      }, 
-      body: JSON.stringify({
-        product_id: +product.product_id,
-        user_id: +userAuthStore.currentUser.id,
-      }),
-    });
-
-    return deleteProductFetch;
-  }
 
   const getAllProductsPrice = computed(() => {
     return cartItems.value.reduce(
@@ -130,12 +90,9 @@ export const useUserCartStore = defineStore("userCart", () => {
     );
   });
 
-
   return {
-    addProductToCart,
     fetchUserCartProducts,
     updateUserCart,
-    deleteProductFromCart,
     updateUserPromo,
     commitOrder,
 
