@@ -1,12 +1,11 @@
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
-export const useCategoiresFilter = (
-  categoriesProducts,
-  { currentPage, prices }
-) => {
+export const useCategoiresFilter = (categoriesProducts, route) => {
 
-  
-  const productsByPage = ref(9);
+  const router = useRouter();
+
+
   const moneySliderSettings = ref({
     min: 1,
     max: 2200,
@@ -17,6 +16,15 @@ export const useCategoiresFilter = (
     },
   });
 
+  const productsByPage = ref(9);
+  //текущая страница товаров
+  const currentPage = ref(+route.query.currentPage || 1);
+  //v model для слайдера цены
+  const prices = ref([
+    +route.query.priceFrom || 1,
+    +route.query.priceTo || 2200,
+  ]);
+
   const sortOptions = ref([
     "По умолчанию",
     "По цене(вверх)",
@@ -24,27 +32,20 @@ export const useCategoiresFilter = (
     "По весу",
   ]);
 
-
   const currentSortOption = ref(sortOptions.value[0]);
-  
   const updateSorting = (sort) => {
     currentSortOption.value = sort;
   };
 
-
-
-  const isFiltersLoading = ref(false);
+ 
 
   //Фильтрация товаров по цене и сортировка по выбранному пользователем варианту
   const filteredProductsByValues = computed(() => {
-  
     const filteredByPrice = categoriesProducts.value.filter(
       (product) =>
         product.Price >= prices.value[0] && product.Price <= prices.value[1]
     );
-
     let sorted = [];
-
     if (currentSortOption.value === "По цене(вверх)") {
       sorted = filteredByPrice.sort(
         (productA, productB) => productA.Price - productB.Price
@@ -58,7 +59,7 @@ export const useCategoiresFilter = (
         (productA, productB) => productA.numberSize - productB.numberSize
       );
     } else sorted = filteredByPrice;
-   
+
     return sorted;
   });
 
@@ -69,8 +70,6 @@ export const useCategoiresFilter = (
   //Пагинация по товаром ( на странице находится productsByPage товаров)
   const filteredProductsByPage = computed(() => {
     let count = filteredProductsByValues.value.length;
-
-    //   console.log(currentPage);
     let start = (currentPage.value - 1) * productsByPage.value;
     if (start >= count) {
       if (count === 0) {
@@ -79,17 +78,30 @@ export const useCategoiresFilter = (
       start = (currentPage.value - 1) * productsByPage.value;
     }
     let end = start + productsByPage.value;
-    // updateFilterLoad();
     return filteredProductsByValues.value.slice(start, end);
   });
 
+  watch([currentPage, prices], () => {
+    router.push({
+      name: route.name,
+      params: { ...route.params },
+      query: {
+        ...route.query,
+        priceFrom: prices.value[0],
+        priceTo: prices.value[1],
+        currentPage: currentPage.value,
+      },
+    });
+  });
+
   return {
+    currentPage,
+    prices,
     filteredProductsByPage,
     productsByPage,
     filteredProductsByValues,
     sortOptions,
-    isFiltersLoading,
-    updateSorting,
     moneySliderSettings,
+    updateSorting,
   };
 };

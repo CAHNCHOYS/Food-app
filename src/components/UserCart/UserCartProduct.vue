@@ -83,7 +83,7 @@ const decrementCount = () => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .cart-product {
   @media (max-width: #{$container+px}) {

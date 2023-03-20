@@ -200,7 +200,7 @@ const registerSubmit = async (values, { resetForm }) => {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 @import "@/assets/scss/LoginRegister.scss";
 
 .login-btn-leave-active,

@@ -1,59 +1,53 @@
 <template>
-    <button class="go-back icon-arrow-left" @click="goBack">
-        <slot>Назад </slot>
-    </button>
+  <button class="go-back icon-arrow-left" @click="goBack">
+    <slot>Назад </slot>
+  </button>
 </template>
 
 <script setup>
-
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const goBack = () => {
-    router.go(-1);
-}
-
-
-
-
+  router.go(-1);
+};
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
-
+@import "@/assets/scss/adaptive-value";
 
 .go-back {
-    line-height: calc(22/18);
-    position: relative;
-    display: inline-block;
+  line-height: calc(22 / 18);
+  position: relative;
+  display: inline-block;
 
-    &::before {
-        position: absolute;
-        left: 0;
-        display: inline-flex;
-        width: rem(20);
-        height: rem(20);
-        background-color: #F46D40;
-        color: white;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.5s ease 0s;
-        border-radius: 50%;
-        transform: translate(0, -10%);
-    }
-
-    padding: 0px 0px 0px rem(30);
+  &::before {
+    position: absolute;
+    left: 0;
+    display: inline-flex;
+    width: rem(20);
+    height: rem(20);
+    background-color: #f46d40;
+    color: white;
+    justify-content: center;
+    align-items: center;
     transition: all 0.5s ease 0s;
+    border-radius: 50%;
+    transform: translate(0, -10%);
+  }
 
-    @media (any-hover:hover) {
-        &:hover {
-            color: cornflowerblue;
+  padding: 0px 0px 0px rem(30);
+  transition: all 0.5s ease 0s;
 
-            &::before {
-                background-color: cornflowerblue;
-            }
-        }
+  @media (any-hover: hover) {
+    &:hover {
+      color: cornflowerblue;
+
+      &::before {
+        background-color: cornflowerblue;
+      }
     }
+  }
 }
 </style>

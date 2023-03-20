@@ -15,7 +15,7 @@ import HomeInfo from "../components/Home/HomeInfo.vue";
 </script>
 
 <style lang="scss">
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .homepage {
   > * {

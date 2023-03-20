@@ -57,14 +57,14 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value.scss";
 //Global styles -------------------------------------------------------
-@import "@/assets/nullstyle.scss";
+@import "@/assets/scss/nullstyle.scss";
 
 //fonts
-@import "@/assets/fonts.scss";
+@import "@/assets/scss/fonts.scss";
 
-@import "@/assets/Ui.scss";
+@import "@/assets/scss/Ui.scss";
 
 
 

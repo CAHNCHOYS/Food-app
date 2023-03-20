@@ -33,7 +33,7 @@ const windowStore = useWindowSizeStore();
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .main {
   flex: 1 1 auto;
@@ -96,8 +96,6 @@ const windowStore = useWindowSizeStore();
     @media (max-width: 1600px) {
       flex: 0 0 360px;
     }
-
-  
   }
 
   // .main__menu-wrapper

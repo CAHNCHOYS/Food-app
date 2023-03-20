@@ -2,16 +2,20 @@
   <div class="reviews">
     <LoadingGif v-if="isFetchingLoading"></LoadingGif>
     <div class="reviews__body" v-else>
-
-
-      <Transition name="review">
-        <div class="reviews__message reviews__message_added" v-if="isReviewAdded">
+      <Transition name="message">
+        <div
+          class="reviews__message reviews__message_added"
+          v-if="isReviewAdded"
+        >
           Отзыв добавлен!
         </div>
       </Transition>
 
-      <Transition name="review">
-        <div class="reviews__message reviews__message_not-logged" v-if="isUserNotLogged">
+      <Transition name="message">
+        <div
+          class="reviews__message reviews__message_not-logged"
+          v-if="isUserNotLogged"
+        >
           Для добавления отзыва требуется войти в аккаунт!
         </div>
       </Transition>
@@ -19,8 +23,11 @@
       <div class="reviews__header" v-if="!isError">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
-          <button class="reviews__add-button" :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
-            @click="isFormToggled = !isFormToggled">
+          <button
+            class="reviews__add-button"
+            :class="{ red: isFormToggled, 'icon-plus': !isFormToggled }"
+            @click="isFormToggled = !isFormToggled"
+          >
             Добавить отзыв
           </button>
         </div>
@@ -28,38 +35,56 @@
 
       <slide-up-down v-model="isFormToggled" :duration="500">
         <div class="reviews__add-form review-form">
-          <LoadingGif class="reviews__loading-form" v-if="isReviewAdding" />
-          <vForm @invalid-submit="invalidFormSubmit" @submit="submitForm" class="review-form__form"
-            :validation-schema="formSchema" :class="{ opacity: isReviewAdding }">
+          <LoadingGif class="reviews__loading-add" v-if="isReviewAdding" />
+          <vForm
+            @invalid-submit="invalidFormSubmit"
+            @submit="addSingleReviewSubmit"
+            class="review-form__form"
+            :validation-schema="formSchema"
+            :class="{ opacity: isReviewAdding }"
+          >
             <div class="review-form__elements">
               <div class="review-form__element">
                 <div class="review-form__element-title">Ваше сообщение</div>
                 <div class="review-form__textarea">
-                  <vField as="textarea" name="message" placeholder="Сообщение" />
-                  
+                  <vField
+                    as="textarea"
+                    name="message"
+                    placeholder="Сообщение"
+                  />
                 </div>
                 <FieldError class="review-form__error-msg" name="message" />
               </div>
 
               <div class="review-form__submit">
-                <button type="submit" :class="{ err: isInvalidSubmit }" :disabled="isInvalidSubmit">
+                <button
+                  type="submit"
+                  :class="{ err: isInvalidSubmit }"
+                  :disabled="isInvalidSubmit"
+                >
                   Отправить отзыв
                 </button>
               </div>
             </div>
           </vForm>
 
-          <VErrorMessage v-if="isAddError" :err-message="addErrorMessage" style="margin-bottom: 20px" />
+          <VErrorMessage
+            v-if="isAddError"
+            :err-message="addErrorMessage"
+            style="margin-bottom: 20px"
+          />
         </div>
       </slide-up-down>
-
 
       <VErrorMessage v-if="isError" :err-message="errorMessage" />
 
       <div v-if="reviews.length" class="reviews__reviews">
         <div class="reviews__all-reviews">
-          <ReviewItem v-for="review in reviews" :key="review.review_id" :review="review" />
-
+          <ReviewItem
+            v-for="review in reviews"
+            :key="review.review_id"
+            :review="review"
+          />
         </div>
       </div>
 
@@ -71,8 +96,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
+import { ref, onMounted } from "vue";
 import {
   Form as vForm,
   Field as vField,
@@ -81,7 +105,10 @@ import {
 import * as yup from "yup";
 
 import ReviewItem from "../components/ReviewItem.vue";
-import { useReviewsActions } from "../Composables/useReviewsActions.js";
+
+import {getAllReviews,  addReview} from "../api/reviews.js";
+
+import { useUserAuthStore } from "../stores/userAuth";
 
 //Работа с формой --------------------------------------------------------------------------------------------------------
 
@@ -91,41 +118,85 @@ const formSchema = yup.object({
     .min(10, "Сообщение должно иметь больше символов!")
     .required("Поле обязательное для ввода!"),
 });
-
 const isFormToggled = ref(false);
 const isInvalidSubmit = ref(false);
-
-const submitForm = async (values, { resetForm }) => {
+const addSingleReviewSubmit = async (values, { resetForm }) => {
   let currentDate = new Date().toLocaleString();
-  await addReviewItem({ ...values, currentDate });
+  await addSingleReview({ ...values, currentDate });
   resetForm();
 };
-
 const invalidFormSubmit = () => {
   isInvalidSubmit.value = true;
   setTimeout(() => (isInvalidSubmit.value = false), 500);
 };
 //-------------------------------------------------------------------------------------------------------------------------
 
-const {
-  isError,
-  isFetchingLoading,
-  reviews,
-  isUserNotLogged,
-  isReviewAdded,
-  isAddError,
-  isReviewAdding,
-  errorMessage,
-  addErrorMessage,
+const userAuthStore = useUserAuthStore();
+const reviews = ref([]);
 
-  addReviewItem,
-} = useReviewsActions();
+const isFetchingLoading = ref(false);
+const isError = ref(false); //Ошибка если не получилось получить отзывы с базы данных
+const isUserNotLogged = ref(false);
+const isReviewAdded = ref(false);
+const isAddError = ref(false);
+const isReviewAdding = ref(false);
 
+const errorMessage = ref("Произошла ошибка");
+const addErrorMessage = ref("Произошла ошибка");
 
+const addSingleReview = async (review) => {
+  isReviewAdding.value = true;
+  if (userAuthStore.checkIfUserLogged) {
+    review.user_id = userAuthStore.currentUser.id;
+
+    const addedReview = await addReview(review);
+
+    if (addedReview.err) {
+      console.log(addedReview.err);
+      isAddError.value = true;
+      setTimeout(() => (isAddError.value = false), 2500);
+      addErrorMessage.value = addedReview.err;
+    }
+    if (addedReview.isAdded) {
+      const splittedDate = review.currentDate.split(",")[0].split(".");
+      const dateToInsert =
+        splittedDate[1] + "." + splittedDate[0] + "." + splittedDate[2];
+
+      reviews.value.push({
+        text: review.message,
+        date: dateToInsert,
+        name: userAuthStore.currentUser.name,
+      });
+
+      isReviewAdded.value = true;
+      setTimeout(() => (isReviewAdded.value = false), 2500);
+    }
+  } else {
+    isUserNotLogged.value = true;
+    setTimeout(() => (isUserNotLogged.value = false), 2500);
+  }
+  isReviewAdding.value = false;
+};
+
+onMounted(async () => {
+  isFetchingLoading.value = true;
+  const reviewsFetch = await getAllReviews();
+  console.log(reviewsFetch);
+  if (reviewsFetch.length) {
+    reviews.value = reviewsFetch;
+  }
+  if (reviewsFetch.err) {
+    console.log(reviewsFetch.err);
+    isError.value = true;
+    errorMessage.value = reviewsFetch.err;
+  }
+
+  isFetchingLoading.value = false;
+});
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .reviews {
   // .reviews__body
@@ -184,7 +255,8 @@ const {
 
   // .reviews__button
 
-  &__button {}
+  &__button {
+  }
 
   // .reviews__add-button
 
@@ -242,7 +314,7 @@ const {
 
   // .reviews__loading-form
 
-  &__loading-form {
+  &__loading-add {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -261,11 +333,11 @@ const {
 
   // .reviews__no-reviews
 
-  &__no-reviews {}
+  &__no-reviews {
+  }
 }
 
 .review-form {
-
   // .review-form__form
   &__form {
     &.opacity {
@@ -283,7 +355,8 @@ const {
 
   // .review-form__element
 
-  &__element {}
+  &__element {
+  }
 
   // .review-form__element-title
 
@@ -351,25 +424,6 @@ const {
   }
 }
 
-.review-leave-active,
-.review-enter-active {
-  transition: all 0.8s ease 0s;
-}
-
-.review-enter-from {
-  transform: translate(0, -100%);
-  opacity: 0;
-}
-
-.review-enter-to {
-  transform: translate(0);
-  opacity: 1;
-}
-
-.review-leave-to {
-  transform: translate(0, 100%);
-  opacity: 0;
-}
 
 .list-leave-active,
 .list-enter-active {

@@ -11,7 +11,7 @@
 <script setup></script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .site-load {
   display: flex;

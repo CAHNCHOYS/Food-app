@@ -28,10 +28,10 @@
 
       <div class="user-account__edit" v-show="isUserEditing">
         <vForm
-          @submit="updateInfo"
+          @submit="updateAccountSubmit"
           class="user-account__edit-form edit-form"
           :validation-schema="userEditSchema"
-          :initial-values="initialValues"
+          :initial-values="formInitialValues"
         >
           <div class="edit-form__elements">
             <div class="edit-form__element">
@@ -40,7 +40,7 @@
                 name="email"
                 type="text"
                 class="edit-form__element-input"
-              ></vField>
+              />
               <FieldError name="email" class="edit-form__wrong-data" />
             </div>
             <div class="edit-form__element">
@@ -49,7 +49,7 @@
                 name="name"
                 type="text"
                 class="edit-form__element-input"
-              ></vField>
+              />
               <FieldError name="name" class="edit-form__wrong-data" />
             </div>
 
@@ -59,7 +59,7 @@
                 name="phone"
                 type="text"
                 class="edit-form__element-input"
-              ></vField>
+              />
               <FieldError name="phone" class="edit-form__wrong-data" />
             </div>
 
@@ -74,8 +74,8 @@
               </button>
 
               <Transition name="message">
-                <div class="edit-form__success" v-if="isSuccess">
-                  Информация о вас была успешно обновлена!
+                <div class="edit-form__success" v-if="isUpdateSuccess">
+                  Информация  была успешно обновлена!
                 </div>
               </Transition>
             </div>
@@ -84,7 +84,7 @@
 
             <VErrorMessage
               :error-message="`Ошибка при обновлении информации`"
-              v-if="isError"
+              v-if="isUpdateError"
             />
           </div>
         </vForm>
@@ -117,27 +117,62 @@ import {
   Field as vField,
   ErrorMessage as FieldError,
 } from "vee-validate";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useRouter } from "vue-router";
 import { useUserAuthStore } from "../stores/userAuth";
-import { computed } from "@vue/reactivity";
+
+import { updateInfo, login } from "../api/users";
 
 const { userEditSchema } = useFormSchemas();
+const router = useRouter();
 
 const userAuthStore = useUserAuthStore();
-const router = useRouter();
 const isUserEditing = ref(false);
 const isLoading = ref(false);
-const isError = ref(false);
-const isSuccess = ref(false); //Сообщение при изменении информации о пользователе
+const isUpdateError = ref(false);
+const isUpdateSuccess = ref(false); 
 
-const updateErrorMessage = ref(
-  "Произошла ошибка при обновлении информации о вас(!"
-);
+const updateErrorMessage = ref("");
 
+const updateAccountSubmit = async (values) => {
+  isLoading.value = true;
+  values.id = userAuthStore.currentUser.id;
+  const updateResult = await updateInfo(values);
+
+  if (updateResult.err) {
+    updateErrorMessage.value = updateResult.err;
+    isUpdateError.value = true;
+    setTimeout(() => (isUpdateError.value = false), 5000);
+  }
+  if (updateResult.isUpdated) {
+    userAuthStore.updateUserInfo(values);
+    console.log(userAuthStore.currentUser);
+    //Так данные о пользователе хранятся в токене, то получаем новый токен
+    let loginAgain = await login({
+      email: userAuthStore.currentUser.email,
+      password: userAuthStore.currentUser.password,
+    });
+    console.log(loginAgain);
+    if (loginAgain.err) {
+      console.log(loginAgain.err);
+      updateErrorMessage.value = res.err;
+      isUpdateError.value = true;
+      setTimeout(() => (isUpdateError.value = false), 5000);
+    } else if (loginAgain.token) {
+      userAuthStore.addTokenToStorage(loginAgain);
+      isUpdateSuccess.value = true;
+     
+      setTimeout(() => {
+        isUpdateSuccess.value = false;
+        isUserEditing.value = false;
+      }, 2500);
+    }
+  }
+  isLoading.value = false;
+};
 
 const logOut = () => {
   if (window.confirm("Вы уверены что хотите выйти с аккаунта?")) {
@@ -146,38 +181,17 @@ const logOut = () => {
   }
 };
 
-
-const updateInfo = async (values) => {
-  isLoading.value = true;
-  let res = await userAuthStore.updateUserInfo(values);
-  if (res.isUpdated) {
-    isSuccess.value = true;
-    setTimeout(() => {
-      isSuccess.value = false;
-      isUserEditing.value = false;
-    }, 2500);
-  } else if (res.err) {
-    updateErrorMessage.value = res.err;
-    isError.value = true;
-    setTimeout(() => (isError.value = false), 5000);
-  }
-
-  isLoading.value = false;
-};
-
-const initialValues = computed(() => {
+const formInitialValues = computed(() => {
   return {
     email: userAuthStore.currentUser.email,
     name: userAuthStore.currentUser.name,
     phone: userAuthStore.currentUser.phone,
   };
 });
-
-
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .user-account {
   &__body {
@@ -236,7 +250,7 @@ const initialValues = computed(() => {
   // .user-account__edit
 
   &__edit {
-    margin: 0px 0px rem(80) 0px;
+    margin: 0px 0px rem(50) 0px;
   }
 
   // .user-account__edit-form
@@ -277,7 +291,7 @@ const initialValues = computed(() => {
 
     // .user-account__btn_edit
     &_edit {
-      background-color: rgb(113, 211, 243);
+      background-color: rgb(77, 208, 252);
 
       @media (any-hover: hover) {
         &:hover {
@@ -359,11 +373,9 @@ const initialValues = computed(() => {
   // .edit-form__success
 
   &__success {
-    margin: rem(10) 0px rem(80) 0px;
-    padding: rem(10);
+    margin: rem(10) 0px 0 0px;
     font-size: rem(20);
-    background-color: lightcoral;
-    color: white;
+    color: black;
     line-height: 1.3;
     font-weight: 500;
   }

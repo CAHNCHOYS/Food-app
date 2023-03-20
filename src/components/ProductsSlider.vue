@@ -53,9 +53,8 @@ import "swiper/css";
 import "swiper/css/pagination";
 
 //-------------------------------------------------------------------
-//api----------------------------------------------------------------
-import { fetchData } from "../api/fetchData";
-//-------------------------------------------------------------------
+import { getCategoryProducts, getTypeProducts } from "../api/products";
+
 
 const props = defineProps({
   productType: String,
@@ -71,9 +70,7 @@ const loadErrorMessage = ref("Произошла ошибка при  загру
 onMounted(async () => {
   isLoading.value = true;
   if (!props.recommendedProducts && props.productType) {
-    let getProducts = await fetchData(
-      `/api/productsByType/${props.productType}`
-    );
+    let getProducts = await getTypeProducts(props.productType);
 
     console.log(getProducts);
     if (getProducts.length) {
@@ -110,9 +107,7 @@ watch(
         console.log(categoryToGet);
       } else categoryToGet = props.recommendedProducts.trim();
 
-      const recommendedProducts = await fetchData(
-        `/api/categories/${categoryToGet}/10`
-      );
+      const recommendedProducts = await getCategoryProducts(categoryToGet, 10);
 
       if (recommendedProducts.err) {
         isErr.value = true;
@@ -123,7 +118,6 @@ watch(
         productsByCategory.value = recommendedProducts;
       }
     }
-
     isLoading.value = false;
   },
   { immediate: true }
@@ -194,7 +188,7 @@ const productSettingsCirle = {
 </script>
 
 <style lang="scss">
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .products-slider {
   min-width: 0;

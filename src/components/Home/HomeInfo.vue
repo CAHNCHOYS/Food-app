@@ -66,7 +66,7 @@ const continueText = ref(false);
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 
 

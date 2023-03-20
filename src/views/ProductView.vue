@@ -11,8 +11,10 @@
         <div class="product__row">
           <div class="product__picture-col">
             <div class="product__picture _ibg">
-              <img :src="`https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`"
-                :alt="pageProduct.name" />
+              <img
+                :src="`https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`"
+                :alt="pageProduct.name"
+              />
             </div>
           </div>
           <div class="product__info-col">
@@ -33,12 +35,17 @@
               </div>
               <div class="product__count count-product">
                 <div class="count-product__row">
-                  <div class="count-product__action count-product__action_minus"
-                    @click="pageProduct.count <= 1 ? '' : pageProduct.count--"></div>
+                  <div
+                    class="count-product__action count-product__action_minus"
+                    @click="pageProduct.count <= 1 ? '' : pageProduct.count--"
+                  ></div>
                   <div class="count-product__number">
                     {{ pageProduct.count }}
                   </div>
-                  <div class="count-product__action icon-plus" @click="pageProduct.count++"></div>
+                  <div
+                    class="count-product__action icon-plus"
+                    @click="pageProduct.count++"
+                  ></div>
                 </div>
               </div>
             </div>
@@ -47,51 +54,72 @@
               <p>{{ pageProduct.consists }}</p>
             </div>
             <div class="product__add-to-cart">
-              <button class="btn icon-cart" v-show="!isActionLoading" @click="
-                addProductAction({
-                  product_id: pageProduct.product_id,
-                  count: pageProduct.count,
-                  name: pageProduct.name,
-                  image: pageProduct.image,
-                  Price: pageProduct.Price,
-                })
-              ">
+              <button
+                class="btn icon-cart"
+                v-show="!isActionLoading"
+                @click="
+                  addProductAction({
+                    product_id: pageProduct.product_id,
+                    count: pageProduct.count,
+                    name: pageProduct.name,
+                    image: pageProduct.image,
+                    Price: pageProduct.Price,
+                  })
+                "
+              >
                 Хочу!
               </button>
             </div>
 
             <LoadingGif v-if="isActionLoading" class="product__action-load" />
 
-
             <Transition name="product-message">
-              <VAlert :position="'static'" :type="'success'" v-if="isProductAdded">
+              <VAlert
+                :position="'static'"
+                :type="'success'"
+                v-if="isProductAdded"
+              >
                 Товар добавлен в корзину!
               </VAlert>
             </Transition>
 
             <Transition name="product-message">
-              <VAlert :position="'static'" :type="'error'" v-if="isAddProductError">
+              <VAlert
+                :position="'static'"
+                :type="'error'"
+                v-if="isAddProductError"
+              >
                 {{ actionErrorMessage }}
               </VAlert>
             </Transition>
 
             <Transition name="product-message">
-              <VAlert :position="'static'" :type="'info'" v-if="isNotLoggedUser">
+              <VAlert
+                :position="'static'"
+                :type="'info'"
+                v-if="isNotLoggedUser"
+              >
                 Для добавления товара в корзину необходимо сначала войти в
                 аккаунт!
               </VAlert>
             </Transition>
-            
           </div>
         </div>
       </div>
 
-      <VErrorMessage v-if="isFetchError" style="margin-bottom: 20px" :err-message="errorMessage" />
+      <VErrorMessage
+        v-if="isFetchError"
+        style="margin-bottom: 20px"
+        :err-message="errorMessage"
+      />
       <p v-else-if="!isProductLoading && !pageProduct">
         Не удалось найти товар с таким именем и айди, проверьте ссылку!
       </p>
     </div>
-    <div class="product-page__recommended-products recomended-products" v-if="pageProduct">
+    <div
+      class="product-page__recommended-products recomended-products"
+      v-if="pageProduct"
+    >
       <div class="recomended-products__title">Рекомендованные товары</div>
 
       <div class="recomended-products__slider">
@@ -102,16 +130,43 @@
 </template>
 
 <script setup>
+import { ref, watch } from "vue";
 import { useProductsActions } from "../Composables/useProductsActions";
-import { useSingleProductFetch } from "../Composables/useSingleProductFetch.js";
+import {getSingleProduct} from "../api/products.js";
+
 
 const props = defineProps({
   id: Number,
   name: String,
 });
 
-const { isFetchError, isProductLoading, pageProduct, errorMessage } =
-  useSingleProductFetch(props);
+const pageProduct = ref(null);
+const isProductLoading = ref(false);
+const isFetchError = ref(false);
+const errorMessage = ref("Произошла ошибка(");
+
+watch(
+  [() => props.name, () => props.id],
+  async () => {
+    isProductLoading.value = true;
+    pageProduct.value = null;
+
+    const product = await getSingleProduct(props.name, props.id);
+    if (product.length) {
+      pageProduct.value = product[0];
+      pageProduct.value.count = 1;
+    }
+
+    if (product.err) {
+      errorMessage.value = product.err;
+      isFetchError.value = true;
+      console.log(product.err);
+    }
+
+    isProductLoading.value = false;
+  },
+  { immediate: true }
+);
 
 const {
   isActionLoading,
@@ -125,7 +180,7 @@ const {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .product-page {
   position: relative;
@@ -236,7 +291,7 @@ const {
     flex: 1 1 auto;
     padding: 0px 0px 0px 30px;
 
-    >*:last-child {
+    > *:last-child {
       margin-bottom: 0px;
     }
 
@@ -314,7 +369,8 @@ const {
 
   // .product__count
 
-  &__count {}
+  &__count {
+  }
 
   // .product__consist
 
@@ -346,7 +402,8 @@ const {
 
   // .product__action-load
 
-  &__action-load {}
+  &__action-load {
+  }
 }
 
 .recomended-products {
@@ -362,6 +419,7 @@ const {
 
   // .recomended-products__slider
 
-  &__slider {}
+  &__slider {
+  }
 }
 </style>

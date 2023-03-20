@@ -28,7 +28,7 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .review {
 

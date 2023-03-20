@@ -112,7 +112,7 @@ const {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .single-product {
   display: flex;

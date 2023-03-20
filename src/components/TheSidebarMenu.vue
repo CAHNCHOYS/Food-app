@@ -70,7 +70,7 @@ const menuLinks = ref([
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .sidebar-menu {
   text-align: center;

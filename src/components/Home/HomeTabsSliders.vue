@@ -45,7 +45,7 @@ const tabsMenuList = ref([
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .tabs-homepage {
   // .tabs-homepage__header

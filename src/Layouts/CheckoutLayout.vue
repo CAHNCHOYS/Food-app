@@ -39,7 +39,7 @@ const windowStore = useWindowSizeStore();
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .checkout {
   flex: 1 1 auto;

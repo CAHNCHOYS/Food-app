@@ -1,11 +1,9 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-
 import { verifyToken, updateInfo, login } from "../api/users.js";
 
 export const useUserAuthStore = defineStore("userAuth", () => {
-
   const currentUser = ref(null);
   const isUserLoggedIn = ref(false);
   const checkIfUserLogged = computed(() => isUserLoggedIn.value);
@@ -46,34 +44,7 @@ export const useUserAuthStore = defineStore("userAuth", () => {
 
   //Обновление данных в личном кабинете
   async function updateUserInfo(userData) {
-    userData.id = currentUser.value.id;
-
-    let userUpdate = await updateInfo(userData);
-
-    if (userUpdate.err) {
-      console.log(userUpdate.err);
-      return { err: userUpdate.err };
-    }
-    if (userUpdate.isUpdated) {
-      
-     
-      //Так данные о пользователе хранятся в токене, то получаем новый токен
-      let loginAgain = await login({
-        email: currentUser.value.email,
-        password: currentUser.value.password,
-      });
-      console.log(loginAgain);
-
-      if (loginAgain.err) {
-        console.log(loginAgain.err);
-        return { err: loginAgain.err };
-      } else if (loginAgain.token) {
-        addTokenToStorage(loginAgain);
-        currentUser.value = Object.assign(currentUser.value, userData);
-        return { isUpdated: true };
-      } 
-      
-    }
+    currentUser.value = Object.assign(currentUser.value, userData);
   }
 
   return {

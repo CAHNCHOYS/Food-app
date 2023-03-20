@@ -1,7 +1,4 @@
-import {
-  createRouter,
-  createWebHashHistory,
-} from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
 const router = createRouter({
@@ -48,18 +45,9 @@ const router = createRouter({
       component: () => import("../views/AccountView.vue"),
       meta: {
         layout: "Main",
+        isLoginRequired: true,
       },
-      beforeEnter(to, from) {
-        if (!localStorage.getItem("token")) {
-          return {
-            name: "login",
-            query: {
-              isLoginRequired: true,
-              redirect: to.fullPath,
-            },
-          };
-        }
-      },
+      
     },
     {
       path: "/cart",
@@ -69,23 +57,9 @@ const router = createRouter({
 
       meta: {
         layout: "Main",
+        isLoginRequired: true,
       },
 
-      beforeEnter(to, from) {
-        if (!localStorage.getItem("token")) {
-          return {
-            name: "login",
-            query: {
-              isLoginRequired: true,
-              redirect: to.fullPath,
-            },
-          };
-        }
-        
-        if (document.documentElement.clientWidth > 1312) {
-          return false;
-        }
-      },
     },
 
     {
@@ -108,7 +82,6 @@ const router = createRouter({
       props: (route) => ({ category: route.params.category }),
     },
 
-  
     {
       path: "/Reviews",
       name: "reviews-page",
@@ -126,22 +99,12 @@ const router = createRouter({
 
       meta: {
         layout: "Checkout",
+        isLoginRequired: true,
       },
-
-      beforeEnter(to, from) {
-        if (!localStorage.getItem("token")) {
-          return {
-            name: "login",
-            query: {
-              isLoginRequired: true,
-              redirect: to.fullPath,
-            },
-          };
-        }
-      },
-    },
 
     
+    },
+
     //404 page
     {
       path: "/:pathMatch(.*)*",
@@ -152,10 +115,20 @@ const router = createRouter({
         layout: "Login",
       },
     },
-  
   ],
   scrollBehavior(to, from, savedPosition) {},
 });
 
+router.beforeEach((to, from) => {
+  if (to.meta.isLoginRequired && !localStorage.getItem("token")) {
+    return {
+      name: "login",
+      query: {
+        isLoginRequired: true,
+        redirect: to.fullPath,
+      },
+    };
+  }
+});
 
 export default router;

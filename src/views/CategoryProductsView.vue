@@ -1,10 +1,10 @@
 <template>
   <div class="category-products">
     <div class="category-products__top-button">
-      <VGoBackButton /> 
+      <VGoBackButton />
     </div>
-     
-    <LoadingGif v-if="isLoading"></LoadingGif>
+
+    <LoadingGif v-if="isLoading" />
     <div class="category-products__content" v-else>
       <div class="category-products__header">
         <div class="category-products__title-col">
@@ -21,7 +21,6 @@
             @update-value="updateSorting"
             :options="sortOptions"
           />
-        
         </div>
       </div>
 
@@ -78,17 +77,16 @@
 
 <script setup>
 import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-import { useCategoryProductsFetch } from "../Composables/useCategoryProductsFecth";
 import { useCategoiresFilter } from "../Composables/useFilterCategories";
-
 //MONEY SLIDER
 import Slider from "@vueform/slider";
 
-
-import { useRoute, useRouter } from "vue-router";
-import "vue-awesome-paginate/dist/style.css";
 import { VueAwesomePaginate } from "vue-awesome-paginate";
+import "vue-awesome-paginate/dist/style.css";
+
+import { searchProducts, getCategoryProducts } from "../api/products";
 
 const props = defineProps({
   category: {
@@ -97,51 +95,80 @@ const props = defineProps({
   },
 });
 
-
 const route = useRoute();
-const router = useRouter();
 
+const isLoading = ref(false);
+const isError = ref(false);
+const errorMessage = ref("Произошла ошибка при загрузке товаров");
 
+const categoryProducts = ref([]);
+const currentCategoryIcon = ref("");
 
-const {
-  isLoading,
-  categoryProducts,
-  isError,
-  currentCategoryIcon,
-  errorMessage,
-} = useCategoryProductsFetch(props, route);
+const categoryIcons = {
+  Пиццы: "icon-pizza",
+  Сеты: "icon-sets",
+  Суши: "icon-sushi",
+  Роллы: "icon-Rolli",
+  Wok: "icon-Wok",
+  Супы: "icon-Soup",
+  Напитки: "icon-drinks2",
+  Салаты: "icon-Salad",
+  "Поиск по товарам": "icon-search",
+};
 
-//текущая страница товаров
-const currentPage = ref(+route.query.currentPage || 1);
-//v model для слайдера цены
-const prices = ref([+route.query.priceFrom || 1, +route.query.priceTo || 2200]);
+// Получаем товары по категория
+watch(
+  [
+    () => props.category,
+    () => route.query.searchCategories,
+    () => route.query.searchProduct,
+  ],
+  async () => {
+    isLoading.value = true;
+    categoryProducts.value = [];
 
-watch([currentPage, prices], () => {
-  router.push({
-    name: route.name,
-    params: { ...route.params },
-    query: {
-      ...route.query,
-      priceFrom: prices.value[0],
-      priceTo: prices.value[1],
-      currentPage: currentPage.value,
-    },
-  });
-});
+    console.log(props.category);
 
+    let products = [];
+
+    //Если пришли с формы поиска
+    if (route.query.searchCategories || route.query.searchProduct) {
+      products = await searchProducts(
+        route.query.searchCategories,
+        route.query.searchProduct
+      );
+      currentCategoryIcon.value = categoryIcons["Поиск по товарам"];
+
+      //Если пришли с меню категорий
+    } else {
+      products = await getCategoryProducts(props.category, 999);
+      currentCategoryIcon.value = categoryIcons[props.category];
+    }
+    if (products.length) categoryProducts.value = products;
+    else if (products.err) {
+      console.log(products.err);
+      errorMessage.value = products.err;
+      isError.value = true;
+    }
+    isLoading.value = false;
+  },
+  { immediate: true }
+);
+
+//Фильтруем товары
 const {
   filteredProductsByPage,
-  productsByPage,
   filteredProductsByValues,
+  productsByPage,
   sortOptions,
-  updateSorting,
   moneySliderSettings,
-} = useCategoiresFilter(categoryProducts, { currentPage, prices });
+  currentPage,
+  prices,
+  updateSorting,
+} = useCategoiresFilter(categoryProducts, route);
 
 //При переходе на новую страницу скролим вверх
 watch(currentPage, () => {
-  console.log(currentPage.value);
-
   const header = document.querySelector(".category-products__header");
   header.scrollIntoView({
     behavior: "smooth",
@@ -151,7 +178,7 @@ watch(currentPage, () => {
 </script>
 
 <style lang="scss">
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .category-products {
   &__content {

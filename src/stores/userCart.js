@@ -82,7 +82,6 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-
   const getAllProductsPrice = computed(() => {
     return cartItems.value.reduce(
       (start, item) => start + item.Price * item.count,
@@ -90,6 +89,7 @@ export const useUserCartStore = defineStore("userCart", () => {
     );
   });
 
+  
   return {
     fetchUserCartProducts,
     updateUserCart,

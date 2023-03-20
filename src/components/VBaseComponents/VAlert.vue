@@ -34,7 +34,7 @@ const messageColorType = computed(() => ({
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/adaptive-value.scss";
+@import "@/assets/scss/adaptive-value";
 
 .message {
   z-index: 200;
@@ -70,6 +70,10 @@ const messageColorType = computed(() => ({
       background-color: unset !important;
       color: crimson !important;
       padding: 0px 0px 0px 0px;
+    }
+
+    .message__body.success {
+      color: green !important;
     }
   }
 

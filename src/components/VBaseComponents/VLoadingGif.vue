@@ -29,7 +29,7 @@ const props = defineProps({
   // .loading-comp__gif
 
   &__gif {
-    padding: 0px 0px 40% 0px;
+    padding: 0px 0px 30% 0px;
 
     img {
       object-fit: contain;
