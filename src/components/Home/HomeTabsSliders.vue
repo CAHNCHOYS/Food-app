@@ -13,13 +13,13 @@
       <div class="tabs-homepage__all-tabs">
         <Transition name="slider">
           <div class="tabs-homepage__tab" v-show="currentOpenTab === 1">
-            <ProductsSlider product-type="isNew" />
+            <TypeSlider product-type="isNew" />
           </div>
         </Transition>
 
         <Transition name="slider">
           <div class="tabs-homepage__tab" v-show="currentOpenTab === 2">
-            <ProductsSlider product-type="isSale" />
+            <TypeSlider product-type="isSale" />
           </div>
         </Transition>
       </div>
@@ -29,6 +29,7 @@
 <script setup>
 
 import { ref } from 'vue';
+import TypeSlider from '../Sliders/TypeSlider.vue';
 
 //Табы( переключение слайдеров )
 const currentOpenTab = ref(1);

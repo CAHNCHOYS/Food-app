@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-import { verifyToken, updateInfo, login } from "../api/users.js";
+import { verifyToken } from "../api/users.js";
 
 export const useUserAuthStore = defineStore("userAuth", () => {
   const currentUser = ref(null);
@@ -12,7 +12,7 @@ export const useUserAuthStore = defineStore("userAuth", () => {
     console.log("tokenn", token);
     console.log("user", user);
     currentUser.value = user;
-    localStorage.setItem("token", JSON.stringify(token));
+    localStorage.setItem("token", token);
 
     isUserLoggedIn.value = true;
   }
@@ -25,7 +25,7 @@ export const useUserAuthStore = defineStore("userAuth", () => {
 
   async function verifyUserToken() {
     if (localStorage.getItem("token")) {
-      const token = JSON.parse(localStorage.getItem("token"));
+      const token = (localStorage.getItem("token"));
       console.log(token);
 
       let verifiedToken = await verifyToken(token);

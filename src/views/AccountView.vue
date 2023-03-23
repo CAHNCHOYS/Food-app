@@ -112,18 +112,17 @@
 </template>
 
 <script setup>
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+
 import {
   Form as vForm,
   Field as vField,
   ErrorMessage as FieldError,
 } from "vee-validate";
-import { ref, computed } from "vue";
-
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
-import { useRouter } from "vue-router";
 import { useUserAuthStore } from "../stores/userAuth";
-
 import { updateInfo, login } from "../api/users";
 
 const { userEditSchema } = useFormSchemas();

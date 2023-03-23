@@ -1,5 +1,6 @@
 <template>
   <div class="fullscreen">
+    
     <Transition name="message">
       <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
         Авторизация прошла успешно! Вас переведут на главную страницу !
@@ -116,6 +117,8 @@ const isLoginError = ref(false);
 const isSuccess = ref(false);
 const isLoading = ref(false);
 const errorMessage = ref("Произошла ошибка");
+
+
 
 const fieldType = ref("password");
 

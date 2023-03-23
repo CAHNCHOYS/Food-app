@@ -24,7 +24,7 @@ import UserCart from "@/components/UserCart/UserCart.vue";
     // .cart-page__body
 
     &__body {
-        padding: 0px 0px rem(30) 0px;
+        padding: 0px 0px rem(40) 0px;
     }
 }
 </style>

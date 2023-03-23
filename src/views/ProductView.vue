@@ -123,7 +123,7 @@
       <div class="recomended-products__title">Рекомендованные товары</div>
 
       <div class="recomended-products__slider">
-        <ProductsSlider :recommended-products="pageProduct.recommendedCat" />
+        <RecommendedSlider :recommended-products="pageProduct.recommendedCat" />
       </div>
     </div>
   </div>
@@ -132,8 +132,8 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useProductsActions } from "../Composables/useProductsActions";
-import {getSingleProduct} from "../api/products.js";
-
+import { getSingleProduct } from "../api/products.js";
+import RecommendedSlider from "../components/Sliders/RecommendedSlider.vue";
 
 const props = defineProps({
   id: Number,

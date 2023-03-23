@@ -2,22 +2,25 @@
   <div class="main">
     <aside class="main__menu-col" v-if="windowStore.getSize > 767">
       <div class="main__menu-wrapper">
-        <TheSidebarMenu></TheSidebarMenu>
+        <TheSidebarMenu />
       </div>
     </aside>
     <div class="main__content">
-      <TheHeader> </TheHeader>
+      <TheHeader /> 
       <div class="main__body">
         <slot></slot>
       </div>
 
-      <TheFooter></TheFooter>
+      <TheFooter />
+
     </div>
     <aside class="main__cart-col cart-col" v-if="windowStore.getSize >= 1312">
       <div class="cart-col__body">
-        <UserCart> </UserCart>
+        <UserCart /> 
       </div>
     </aside>
+
+   <TheBottomMenu v-if="windowStore.getSize < 767.98" />
   </div>
 </template>
 
@@ -26,6 +29,7 @@ import TheHeader from "@/components/TheHeader.vue";
 import TheFooter from "@/components/TheFooter.vue";
 import TheSidebarMenu from "@/components/TheSidebarMenu.vue";
 import UserCart from "@/components/UserCart/UserCart.vue";
+import TheBottomMenu from "../components/TheBottomMenu.vue";
 
 import { useWindowSizeStore } from "../stores/windowSize.js";
 
@@ -85,7 +89,7 @@ const windowStore = useWindowSizeStore();
     }
 
     @media (max-width: #{$mobile+px}) {
-      padding: rem(100) 15px 0px 15px;
+      padding: rem(110) 15px 0px 15px;
     }
   }
 

@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="footer__body">
       <div class="footer__row">
-        <div class="footer__column">
+        <div class="footer__column" v-if="windowSizeStore.getSize > 767.98">
           <ul class="footer__list">
             <li>
               <router-link to="/" class="footer__link">О компании</router-link>
@@ -24,8 +24,14 @@
             </li>
           </ul>
         </div>
-        <div class="footer__column" v-if="windowSizeStore.getSize > 479.98">
-          <div class="footer__title">Мы в соц сетях:</div>
+        <div class="footer__column">
+          <div class="footer__title">
+            <span v-if="windowSizeStore.getSize > 767.98">Мы в соц сетях </span>
+            <span class="message" v-else>
+              Выберите удобный мессенджер для общения
+            </span>
+          </div>
+
           <ul class="footer__social-list">
             <li>
               <a href="" class="footer__social-link">
@@ -92,6 +98,9 @@ const windowSizeStore = useWindowSizeStore();
     @media (max-width: #{$container+px}) {
       padding: 0px 15px 15px 15px;
     }
+    @media (max-width: #{$mobile+px}) {
+      padding: 0px 15px rem(80) 15px;
+    }
   }
 
   // .footer__row
@@ -100,6 +109,18 @@ const windowSizeStore = useWindowSizeStore();
     flex-wrap: wrap;
     border-top: 1px solid #a4acad;
     column-gap: 10px;
+    > *:not(:last-child) {
+      border-right: rem(1) solid #a4acad;
+    }
+    @media (max-width: #{$mobile+px}) {
+
+      padding: 10px 0px 0px 0px;
+      flex-direction: column;
+      > *:not(:last-child) {
+        border-right: none;
+      }
+      row-gap: rem(30);
+    }
   }
 
   // .footer__column
@@ -113,13 +134,14 @@ const windowSizeStore = useWindowSizeStore();
     }
 
     @media (max-width: #{$mobile+px}) {
-      flex: 1 1 calc(50% - 10px);
-      padding: rem(15) 0px rem(15) 0px;
+      flex: 0 1 auto;
+      text-align: center;
+      padding: 0px 0px 0px 0px;
     }
 
     @media (max-width: #{$mobileSmall+px}) {
       flex: 1 1 100%;
-      padding: rem(8) 0px rem(8) 0px;
+     
       text-align: center;
     }
   }
@@ -150,13 +172,20 @@ const windowSizeStore = useWindowSizeStore();
 
   &__title {
     text-align: center;
-    font-size: rem(24);
+    font-size: rem(22);
     margin-bottom: rem(30);
     font-weight: 500;
     line-height: calc(28 / 24);
 
     @media (max-width: #{$tablet+px}) {
       margin-bottom: rem(10);
+    }
+    span.message {
+      font-size: rem(18);
+      line-height: calc(22/18 * 100%);
+      color: #a4acad;
+      display: block;
+      margin: 0px 0px rem(15) 0px;
     }
   }
 
@@ -198,10 +227,11 @@ const windowSizeStore = useWindowSizeStore();
 
   &__info {
     color: #a4acad;
-
-    @media (min-width: #{$mobile+px}) {
-      text-align: right;
+    @media(min-width: #{$tablet+px}){ 
+      padding: 0px 0px 0px rem(30);
     }
+    
+ 
   }
 
   // .footer__mobile-phone
@@ -224,6 +254,10 @@ const windowSizeStore = useWindowSizeStore();
   &__info-author {
     text-align: center;
     padding: 5px 0px 5px 0px;
+    @media(max-width: #{$mobile+px}){
+        
+  
+    }
   }
 
   // .footer__author

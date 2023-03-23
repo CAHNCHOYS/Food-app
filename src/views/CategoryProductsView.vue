@@ -182,7 +182,8 @@ watch(currentPage, () => {
 
 .category-products {
   &__content {
-    padding: 0px 0px rem(100) 0px;
+    @include adaptive-value('padding-bottom',100 ,40); 
+  
   }
 
   // .category-products__header

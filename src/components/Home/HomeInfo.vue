@@ -147,5 +147,10 @@ const continueText = ref(false);
             }
         }
     }
+
+    padding-bottom: rem(60);
+    @media(max-width: #{$mobile+px}){
+        padding-bottom: rem(25);    
+    }
 }
 </style>

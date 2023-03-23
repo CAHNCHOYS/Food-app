@@ -3,7 +3,6 @@ import SlideUpDown from "vue3-slide-up-down";
 import VueAwesomePaginate from "vue-awesome-paginate";
 import VueLazyLoad from "vue3-lazyload";
 
-import ProductsSlider from "./components/ProductsSlider.vue";
 import SingleProduct from "./components/SingleProduct.vue";
 import VSiteInfo from "./components/VBaseComponents/VSiteInfo.vue";
 import vCustomSelect from "./components/VBaseComponents/vCustomSelect.vue";
@@ -25,7 +24,6 @@ export const global = {
     VGoBackButton,
     VLoadingGif,
     vCustomSelect,
-    ProductsSlider,
     VueAwesomePaginate,
     VueLazyLoad,
 }

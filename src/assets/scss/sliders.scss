@@ -1,0 +1,135 @@
+@import "./adaptive-value.scss";
+
+.products-slider {
+    min-width: 0;
+    overflow: hidden;
+  
+    // .products-slider__slider
+    &__slider {
+      min-width: 0;
+      overflow: hidden;
+      position: relative;
+  
+      .swiper-pagination {
+        z-index: 10 !important;
+      }
+    }
+  
+    // .products-slider__by-type
+  
+    &__by-type {
+      position: relative;
+    }
+  
+    // .products-slider__by-type-body
+  
+    &__by-type-body {
+      position: relative;
+    }
+  
+    // .products-slider__pagination
+  
+    &__pagination {
+      z-index: 100;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      column-gap: 5px;
+      flex-wrap: wrap;
+      height: auto;
+      row-gap: 5px;
+      margin: rem(30) 0px 0px 0px;
+  
+      // background: #A4ACAD;
+      span {
+        flex: 0 0 12px !important;
+        height: 12px !important;
+  
+        opacity: 1 !important;
+        background: #a4acad !important;
+  
+        &.swiper-pagination-bullet-active {
+          background-color: #ff9846 !important;
+        }
+      }
+    }
+  
+    // .products-slider__arrow
+    &__arrow {
+      position: absolute;
+      z-index: 5;
+      top: 50%;
+      display: flex;
+      width: rem(60);
+      height: rem(60);
+      transform: translate(0, -50%);
+      background: #111111;
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+  
+      &::before {
+        color: white;
+        font-size: rem(24);
+      }
+  
+      &.icon-arrow-left {
+        left: 0;
+  
+        @media (max-width: #{$container+px}) {
+          left: rem(-10);
+        }
+      }
+  
+      &.icon-arrow-right {
+        right: 0;
+  
+        @media (max-width: #{$container+px}) {
+          right: rem(-10);
+        }
+      }
+  
+      transition: all 0.5s ease 0s;
+  
+      @media (any-hover: hover) {
+        &:hover {
+          background-color: cornflowerblue;
+        }
+      }
+  
+      @media (max-width: #{$container+px}) {
+        width: rem(45);
+        height: rem(45);
+      }
+  
+      @media (max-width: #{$tablet+px}) {
+        width: rem(30);
+        height: rem(30);
+  
+        &::before {
+          font-size: rem(16);
+        }
+      }
+  
+      &.swiper-button-disabled {
+        opacity: 0.3;
+      }
+    }
+  
+    // .products-slider__by-category
+  
+    &__by-category {
+    }
+  }
+  
+  .swiper {
+    width: 100%;
+    position: relative;
+  }
+  
+  .swiper-slide {
+    height: auto !important;
+  }
+
+

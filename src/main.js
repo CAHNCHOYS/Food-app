@@ -7,6 +7,7 @@ import { global } from "./GlobalComponents.js";
 
 import { configure } from "vee-validate";
 
+
 //vee-validate
 configure({
   validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
@@ -14,6 +15,11 @@ configure({
   validateOnInput: true, // controls if `input` events should trigger validation with `handleChange` handler
   validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
+//swiper 
+import "swiper/css";
+import "swiper/css/pagination";
+
+
 
 const app = createApp(App);
 
@@ -31,6 +37,6 @@ app.component("VAlert", global.VAlert);
 app.component("LoadingGif", global.VLoadingGif);
 app.component("slide-up-down", global.SlideUpDown);
 app.component("SingleProduct", global.SingleProduct);
-app.component("ProductsSlider", global.ProductsSlider);
+
 
 app.mount("#app");
