@@ -1,19 +1,24 @@
 <template>
   <div class="fullscreen">
- 
-
     <Transition name="message">
-      <VAlert :position="'fixed'" :type="'error'" v-if="isRegistrationError">
-        {{ registerErrorMessage }}
+      <VAlert
+        :position="'fixed'"
+        :type="'success'"
+        v-if="userAuthStore.isSuccessMessageShown"
+      >
+        {{ userAuthStore.message }}
       </VAlert>
     </Transition>
 
     <Transition name="message">
-      <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
-        Пользователь добавлен в базу данных !)
+      <VAlert
+        :position="'fixed'"
+        :type="'error'"
+        v-if="userAuthStore.isErrorMessageShown"
+      >
+        {{ userAuthStore.message }}
       </VAlert>
     </Transition>
-
     <div class="fullscreen__body">
       <div class="fullscreen__content">
         <div class="fullscreen__form-body">
@@ -147,7 +152,7 @@ import {
   ErrorMessage as FieldError,
 } from "vee-validate";
 
-import { register } from "../api/users";
+import { useUserAuthStore } from "../stores/userAuth";
 const { registerSchema } = useFormSchemas();
 
 const {
@@ -158,12 +163,10 @@ const {
   phoneControl,
 } = useFormActions();
 
-const isRegistrationError = ref(false);
-const isSuccess = ref(false);
+const userAuthStore = useUserAuthStore();
 const isLoading = ref(false);
 
 const userCanGoToLogin = ref(false);
-const registerErrorMessage = ref("Произошла ошибка");
 
 const cities = ref(["Москва", "СПБ", "Донецк", "Ростов"]);
 const selectedCity = ref(cities.value[0]);
@@ -173,28 +176,15 @@ const updateCity = (city) => {
 
 const registerSubmit = async (values, { resetForm }) => {
   isLoading.value = true;
-
   let userData = {
     ...values,
     city: selectedCity.value,
   };
-  
 
-  const registerResult = await register(userData);
-
-  console.log(registerResult);
-  if (registerResult.isSuccess) {
-    isSuccess.value = true;
-    setTimeout(() => (isSuccess.value = false), 3000);
+  if (await userAuthStore.registerUser(userData)) {
     resetForm();
     userCanGoToLogin.value = true;
-  } else if (registerResult.err) {
-    console.log(registerResult.err);
-    registerErrorMessage.value = registerResult.err;
-    isRegistrationError.value = true;
-    setTimeout(() => (isRegistrationError.value = false), 3000);
   }
-
   isLoading.value = false;
 };
 </script>

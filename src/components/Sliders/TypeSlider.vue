@@ -48,19 +48,14 @@ const loadErrorMessage = ref("Произошла ошибка при  загру
 onMounted(async () => {
   isLoading.value = true;
 
-  let getProducts = await getTypeProducts(props.productType);
-
-  console.log(getProducts);
-  if (getProducts.length) {
-    productsByType.value = getProducts;
-  }
-
-  if (getProducts.err) {
-    loadErrorMessage.value = getProducts.err;
+  try {
+    const products = await getTypeProducts(props.productType);
+    productsByType.value = products;
+  } catch (error) {
+    loadErrorMessage.value = error.message;
     console.log(getProducts.err);
     isLoadErr.value = true;
   }
-
   isLoading.value = false;
 });
 
@@ -94,6 +89,6 @@ const productSliderSettings = {
 };
 </script>
 
-<style lang="scss" >
+<style lang="scss">
 @import "@/assets/scss/sliders.scss";
 </style>

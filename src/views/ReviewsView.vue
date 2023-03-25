@@ -1,6 +1,6 @@
 <template>
   <div class="reviews">
-    <LoadingGif v-if="isFetchingLoading"></LoadingGif>
+    <LoadingGif v-if="isFetchingLoading" />
     <div class="reviews__body" v-else>
       <Transition name="message">
         <div
@@ -20,7 +20,7 @@
         </div>
       </Transition>
 
-      <div class="reviews__header" v-if="!isError">
+      <div class="reviews__header" v-if="!isFetchError">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
           <button
@@ -76,7 +76,7 @@
         </div>
       </slide-up-down>
 
-      <VErrorMessage v-if="isError" :err-message="errorMessage" />
+      <VErrorMessage v-if="isFetchError" :err-message="fetchErrorMessage" />
 
       <div v-if="reviews.length" class="reviews__reviews">
         <div class="reviews__all-reviews">
@@ -88,7 +88,10 @@
         </div>
       </div>
 
-      <div class="reviews__no-reviews" v-else-if="!isError && !reviews.length">
+      <div
+        class="reviews__no-reviews"
+        v-else-if="!isFetchError && !reviews.length"
+      >
         Пока что отзывов нет, станьте первым!
       </div>
     </div>
@@ -106,12 +109,11 @@ import * as yup from "yup";
 
 import ReviewItem from "../components/ReviewItem.vue";
 
-import {getAllReviews,  addReview} from "../api/reviews.js";
-
+import { getAllReviews, addReview } from "../api/reviews.js";
 import { useUserAuthStore } from "../stores/userAuth";
+import {dateFormat} from "@/utils/date.js";
 
 //Работа с формой --------------------------------------------------------------------------------------------------------
-
 const formSchema = yup.object({
   message: yup
     .string()
@@ -135,41 +137,33 @@ const userAuthStore = useUserAuthStore();
 const reviews = ref([]);
 
 const isFetchingLoading = ref(false);
-const isError = ref(false); //Ошибка если не получилось получить отзывы с базы данных
+const isFetchError = ref(false);
 const isUserNotLogged = ref(false);
 const isReviewAdded = ref(false);
 const isAddError = ref(false);
 const isReviewAdding = ref(false);
 
-const errorMessage = ref("Произошла ошибка");
+const fetchErrorMessage = ref("Произошла ошибка");
 const addErrorMessage = ref("Произошла ошибка");
 
 const addSingleReview = async (review) => {
   isReviewAdding.value = true;
   if (userAuthStore.checkIfUserLogged) {
-    review.user_id = userAuthStore.currentUser.id;
-
-    const addedReview = await addReview(review);
-
-    if (addedReview.err) {
-      console.log(addedReview.err);
-      isAddError.value = true;
-      setTimeout(() => (isAddError.value = false), 2500);
-      addErrorMessage.value = addedReview.err;
-    }
-    if (addedReview.isAdded) {
-      const splittedDate = review.currentDate.split(",")[0].split(".");
-      const dateToInsert =
-        splittedDate[1] + "." + splittedDate[0] + "." + splittedDate[2];
-
+    try {
+      review.user_id = userAuthStore.currentUser.id;
+      await addReview(review);
       reviews.value.push({
         text: review.message,
-        date: dateToInsert,
+        date: dateFormat(review.currentDate),
         name: userAuthStore.currentUser.name,
       });
 
       isReviewAdded.value = true;
       setTimeout(() => (isReviewAdded.value = false), 2500);
+    } catch (error) {
+      isAddError.value = true;
+      setTimeout(() => (isAddError.value = false), 2500);
+      addErrorMessage.value = error.message;
     }
   } else {
     isUserNotLogged.value = true;
@@ -180,17 +174,13 @@ const addSingleReview = async (review) => {
 
 onMounted(async () => {
   isFetchingLoading.value = true;
-  const reviewsFetch = await getAllReviews();
-  console.log(reviewsFetch);
-  if (reviewsFetch.length) {
-    reviews.value = reviewsFetch;
+  try {
+    const allReviews = await getAllReviews();
+    reviews.value = allReviews;
+  } catch (error) {
+    isFetchError.value = true;
+    fetchErrorMessage.value = error.message;
   }
-  if (reviewsFetch.err) {
-    console.log(reviewsFetch.err);
-    isError.value = true;
-    errorMessage.value = reviewsFetch.err;
-  }
-
   isFetchingLoading.value = false;
 });
 </script>
@@ -423,7 +413,6 @@ onMounted(async () => {
     color: crimson;
   }
 }
-
 
 .list-leave-active,
 .list-enter-active {

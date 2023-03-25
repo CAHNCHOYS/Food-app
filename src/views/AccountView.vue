@@ -75,7 +75,7 @@
 
               <Transition name="message">
                 <div class="edit-form__success" v-if="isUpdateSuccess">
-                  Информация  была успешно обновлена!
+                  Информация была успешно обновлена!
                 </div>
               </Transition>
             </div>
@@ -123,7 +123,7 @@ import {
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useUserAuthStore } from "../stores/userAuth";
-import { updateInfo, login } from "../api/users";
+import { updateInfo } from "../api/users";
 
 const { userEditSchema } = useFormSchemas();
 const router = useRouter();
@@ -132,43 +132,26 @@ const userAuthStore = useUserAuthStore();
 const isUserEditing = ref(false);
 const isLoading = ref(false);
 const isUpdateError = ref(false);
-const isUpdateSuccess = ref(false); 
+const isUpdateSuccess = ref(false);
 
 const updateErrorMessage = ref("");
 
 const updateAccountSubmit = async (values) => {
   isLoading.value = true;
-  values.id = userAuthStore.currentUser.id;
-  const updateResult = await updateInfo(values);
+  try {
+    values.id = userAuthStore.currentUser.id;
+    await updateInfo(values);
+    await userAuthStore.getUser();
+    isUpdateSuccess.value = true;
 
-  if (updateResult.err) {
-    updateErrorMessage.value = updateResult.err;
+    setTimeout(() => {
+      isUpdateSuccess.value = false;
+      isUserEditing.value = false;
+    }, 2500);
+  } catch (error) {
+    updateErrorMessage.value = error.message;
     isUpdateError.value = true;
     setTimeout(() => (isUpdateError.value = false), 5000);
-  }
-  if (updateResult.isUpdated) {
-    userAuthStore.updateUserInfo(values);
-    console.log(userAuthStore.currentUser);
-    //Так данные о пользователе хранятся в токене, то получаем новый токен
-    let loginAgain = await login({
-      email: userAuthStore.currentUser.email,
-      password: userAuthStore.currentUser.password,
-    });
-    console.log(loginAgain);
-    if (loginAgain.err) {
-      console.log(loginAgain.err);
-      updateErrorMessage.value = res.err;
-      isUpdateError.value = true;
-      setTimeout(() => (isUpdateError.value = false), 5000);
-    } else if (loginAgain.token) {
-      userAuthStore.addTokenToStorage(loginAgain);
-      isUpdateSuccess.value = true;
-     
-      setTimeout(() => {
-        isUpdateSuccess.value = false;
-        isUserEditing.value = false;
-      }, 2500);
-    }
   }
   isLoading.value = false;
 };

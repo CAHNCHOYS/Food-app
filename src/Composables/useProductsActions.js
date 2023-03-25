@@ -1,9 +1,8 @@
 import { ref } from "vue";
 
 import { useUserCartStore } from "../stores/userCart";
-import {useUserAuthStore} from "../stores/userAuth";
-import {addToCart, deleteFromCart} from "../api/products";
-
+import { useUserAuthStore } from "../stores/userAuth";
+import { addToCart, deleteFromCart } from "../api/products";
 
 export const useProductsActions = () => {
   const userCartStore = useUserCartStore();
@@ -17,21 +16,15 @@ export const useProductsActions = () => {
   const actionErrorMessage = ref("Произошла ошибка");
 
   const deleteProductAction = async (product) => {
-
     isActionLoading.value = true;
-    const deletedProduct = await deleteFromCart({
-      product_id: +product.product_id,
-      user_id: +userAuthStore.currentUser.id,
-    });
-
-    console.log(deletedProduct);
-
-    if (deletedProduct.isRemoved) {
+    try {
+      await deleteFromCart({
+        product_id: +product.product_id,
+        user_id: +userAuthStore.currentUser.id,
+      });
       userCartStore.updateUserCart(product, "Remove");
-    }
-    if (deletedProduct.err) {
-      actionErrorMessage.value = deletedProduct.err;
-      console.log(deletedProduct.err);
+    } catch (error) {
+      actionErrorMessage.value = error.message;
       isDeleteError.value = true;
       setTimeout(() => (isDeleteError.value = false), 2500);
     }
@@ -45,22 +38,20 @@ export const useProductsActions = () => {
         product.count = 1;
       }
 
-      const addedProduct = await addToCart({
-        product_id: product.product_id,
-        user_id: userAuthStore.currentUser.id,
-        count: product.count,
-      });
-      if (addedProduct.err) {
-        console.log(addedProduct.err);
-        actionErrorMessage.value = addedProduct.err;
-        isAddProductError.value = true;
-        setTimeout(() => (isAddProductError.value = false), 2500);
-      }
+      try {
+        await addToCart({
+          product_id: product.product_id,
+          user_id: userAuthStore.currentUser.id,
+          count: product.count,
+        });
 
-      if (addedProduct.isAdded) {
         isProductAdded.value = true;
         userCartStore.updateUserCart(product, "Add");
         setTimeout(() => (isProductAdded.value = false), 2500);
+      } catch (error) {
+        actionErrorMessage.value = error.message;
+        isAddProductError.value = true;
+        setTimeout(() => (isAddProductError.value = false), 2500);
       }
     } else {
       isNotLoggedUser.value = true;

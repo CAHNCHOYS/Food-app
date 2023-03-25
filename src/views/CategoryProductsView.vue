@@ -54,7 +54,7 @@
         </div>
       </div>
 
-      <div class="category-products__no-products" v-else-if="!isError">
+      <div class="category-products__no-products" v-else-if="!isFetchError">
         Не удалось найти ни одного товара в данной категории или поиске(
       </div>
 
@@ -98,7 +98,7 @@ const props = defineProps({
 const route = useRoute();
 
 const isLoading = ref(false);
-const isError = ref(false);
+const isFetchError = ref(false);
 const errorMessage = ref("Произошла ошибка при загрузке товаров");
 
 const categoryProducts = ref([]);
@@ -125,30 +125,26 @@ watch(
   ],
   async () => {
     isLoading.value = true;
-    categoryProducts.value = [];
 
-    console.log(props.category);
+    try {
+      let products = [];
+      //Если пришли с формы поиска
+      if (route.query.searchCategories || route.query.searchProduct) {
+        products = await searchProducts(
+          route.query.searchCategories,
+          route.query.searchProduct
+        );
+        currentCategoryIcon.value = categoryIcons["Поиск по товарам"];
 
-    let products = [];
-
-    //Если пришли с формы поиска
-    if (route.query.searchCategories || route.query.searchProduct) {
-      products = await searchProducts(
-        route.query.searchCategories,
-        route.query.searchProduct
-      );
-      currentCategoryIcon.value = categoryIcons["Поиск по товарам"];
-
-      //Если пришли с меню категорий
-    } else {
-      products = await getCategoryProducts(props.category, 999);
-      currentCategoryIcon.value = categoryIcons[props.category];
-    }
-    if (products.length) categoryProducts.value = products;
-    else if (products.err) {
-      console.log(products.err);
-      errorMessage.value = products.err;
-      isError.value = true;
+        //Если пришли с меню категорий
+      } else {
+        products = await getCategoryProducts(props.category, 999);
+        currentCategoryIcon.value = categoryIcons[props.category];
+      }
+      categoryProducts.value = products;
+    } catch (error) {
+      errorMessage.value = error.message;
+      isFetchError.value = true;
     }
     isLoading.value = false;
   },
@@ -182,8 +178,7 @@ watch(currentPage, () => {
 
 .category-products {
   &__content {
-    @include adaptive-value('padding-bottom',100 ,40); 
-  
+    @include adaptive-value("padding-bottom", 100, 40);
   }
 
   // .category-products__header

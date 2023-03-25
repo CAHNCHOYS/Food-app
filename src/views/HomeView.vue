@@ -22,7 +22,7 @@ import HomeInfo from "../components/Home/HomeInfo.vue";
     padding: 0px 0px rem(70) 0px;
 
     @media (max-width: #{$mobile+px}) {
-      padding: 0px 0px rem(60) 0px;
+      padding: 0px 0px rem(50) 0px;
     }
   }
 }

@@ -41,7 +41,7 @@ onMounted(async () => {
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
   window.addEventListener("resize", checkSize);
 
-  await userAuthStore.verifyUserToken();
+  await userAuthStore.getUser();
   //Получение товаров в корзине
   if (userAuthStore.checkIfUserLogged) {
     await userCartStore.fetchUserCartProducts();

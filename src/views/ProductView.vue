@@ -113,7 +113,7 @@
         :err-message="errorMessage"
       />
       <p v-else-if="!isProductLoading && !pageProduct">
-        Не удалось найти товар с таким именем и айди, проверьте ссылку!
+        Не удалось найти товар с таким именем и айди :(
       </p>
     </div>
     <div
@@ -151,18 +151,16 @@ watch(
     isProductLoading.value = true;
     pageProduct.value = null;
 
-    const product = await getSingleProduct(props.name, props.id);
-    if (product.length) {
-      pageProduct.value = product[0];
-      pageProduct.value.count = 1;
-    }
-
-    if (product.err) {
-      errorMessage.value = product.err;
+    try {
+      const product = await getSingleProduct(props.name, props.id);
+      console.log(product);
+      pageProduct.value = product; 
+      if(product) product.count = 1;
+    } catch (error) {
+      errorMessage.value = error.message;
       isFetchError.value = true;
-      console.log(product.err);
+   
     }
-
     isProductLoading.value = false;
   },
   { immediate: true }

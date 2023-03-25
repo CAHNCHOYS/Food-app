@@ -1,12 +1,48 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-import { verifyToken } from "../api/users.js";
+import { getUserByToken, login, register } from "../api/users.js";
 
 export const useUserAuthStore = defineStore("userAuth", () => {
   const currentUser = ref(null);
   const isUserLoggedIn = ref(false);
   const checkIfUserLogged = computed(() => isUserLoggedIn.value);
+
+  const isSuccessMessageShown = ref(false);
+  const isErrorMessageShown = ref(false);
+  const message = ref("");
+
+  async function loginUser(loginPayload) {
+    try {
+      let loginResult = await login(loginPayload);
+      isSuccessMessageShown.value = true;
+      addTokenToStorage(loginResult);
+      message.value =
+        "Авторизация прошла успешно, вскоре вы будете переведены на главную страницу!";
+      setTimeout(() => (isSuccessMessageShown.value = false), 3000);
+    } catch (error) {
+      isErrorMessageShown.value = true;
+      message.value = error.message;
+      setTimeout(() => (isErrorMessageShown.value = false), 3000);
+    }
+  }
+
+  async function registerUser(registerPayload) {
+    try {
+      await register(registerPayload);
+      isSuccessMessageShown.value = true;
+
+      message.value =
+        "Регистрация прошла успешно, можете переходить к авторизации!";
+      setTimeout(() => (isSuccessMessageShown.value = false), 3000);
+      return true;
+    } catch (error) {
+      isErrorMessageShown.value = true;
+      message.value = error.message;
+      setTimeout(() => (isErrorMessageShown.value = false), 3000);
+      return false;
+    }
+  }
 
   function addTokenToStorage({ token, user }) {
     console.log("tokenn", token);
@@ -23,38 +59,31 @@ export const useUserAuthStore = defineStore("userAuth", () => {
     currentUser.value = null;
   }
 
-  async function verifyUserToken() {
+  async function getUser() {
     if (localStorage.getItem("token")) {
-      const token = (localStorage.getItem("token"));
-      console.log(token);
-
-      let verifiedToken = await verifyToken(token);
-
-      console.log(verifiedToken);
-      if (verifiedToken.isInvalidToken) {
-        logOutUser();
-      } else if (verifiedToken.user) {
-        currentUser.value = verifiedToken.user;
+      const token = localStorage.getItem("token");
+      try {
+        const user = await getUserByToken(token);
+        currentUser.value = user;
         isUserLoggedIn.value = true;
-      } else if (verifiedToken.err) {
-        console.log(verifiedToken.err);
+      } catch (error) {
+        console.log(error);
+        logOutUser();
       }
     }
   }
 
-  //Обновление данных в личном кабинете
-  async function updateUserInfo(userData) {
-    currentUser.value = Object.assign(currentUser.value, userData);
-  }
-
   return {
     addTokenToStorage,
-    verifyUserToken,
-
+    getUser,
     logOutUser,
-    updateUserInfo,
+    loginUser,
+    registerUser,
 
     checkIfUserLogged,
+    isSuccessMessageShown,
+    isErrorMessageShown,
+    message,
     currentUser,
   };
 });

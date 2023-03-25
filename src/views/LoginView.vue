@@ -1,15 +1,22 @@
 <template>
   <div class="fullscreen">
-    
     <Transition name="message">
-      <VAlert :position="'fixed'" :type="'success'" v-if="isSuccess">
-        Авторизация прошла успешно! Вас переведут на главную страницу !
+      <VAlert
+        :position="'fixed'"
+        :type="'success'"
+        v-if="userAuthStore.isSuccessMessageShown"
+      >
+        {{ userAuthStore.message }}
       </VAlert>
     </Transition>
 
     <Transition name="message">
-      <VAlert :position="'fixed'" :type="'error'" v-if="isLoginError">
-        {{ errorMessage }}
+      <VAlert
+        :position="'fixed'"
+        :type="'error'"
+        v-if="userAuthStore.isErrorMessageShown"
+      >
+        {{ userAuthStore.message }}
       </VAlert>
     </Transition>
 
@@ -86,6 +93,7 @@
 
 <script setup>
 import { ref, watchEffect } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 import {
   Form as vForm,
@@ -99,50 +107,32 @@ import { useFormSchemas } from "../Composables/useFormSchemas";
 import { useUserAuthStore } from "../stores/userAuth.js";
 import { useUserCartStore } from "../stores/userCart";
 
-import { useRouter, useRoute } from "vue-router";
-
-import { login } from "../api/users";
-
 const { fetchUserCartProducts } = useUserCartStore();
 
 const router = useRouter();
 const route = useRoute();
 
 const { loginSchema } = useFormSchemas();
-
 const { isInvalidFormSubmit, toggleBlur, toggleFocus, invalidSubmit } =
   useFormActions();
 
-const isLoginError = ref(false);
-const isSuccess = ref(false);
+const userAuthStore = useUserAuthStore();
 const isLoading = ref(false);
-const errorMessage = ref("Произошла ошибка");
-
-
 
 const fieldType = ref("password");
 
 const loginSubmit = async (values) => {
   isLoading.value = true;
 
-  let loginResult = await login(values);
+  await userAuthStore.loginUser(values);
 
-  console.log(loginResult);
-  if (loginResult.err) {
-    errorMessage.value = loginResult.err;
-    isLoginError.value = true;
-    setTimeout(() => (isLoginError.value = false), 3000);
-  } else if (loginResult.token) {
-    const userAuthStore = useUserAuthStore();
-    userAuthStore.addTokenToStorage(loginResult);
-    isSuccess.value = true;
-
+  if (userAuthStore.checkIfUserLogged) {
     await fetchUserCartProducts();
     setTimeout(() => {
       router.push("/");
-      isSuccess.value = false;
     }, 2000);
   }
+
   isLoading.value = false;
 };
 
@@ -150,10 +140,10 @@ const loginSubmit = async (values) => {
 // перекидываем на эту старнциу и показываем сообщение
 watchEffect(() => {
   if (route.query.redirect) {
-    isLoginError.value = true;
-    errorMessage.value = `Для доступа к данной странице ( ${route.query.redirect}) необходимо
+    userAuthStore.isErrorMessageShown.value = true;
+    userAuthStore.message = `Для доступа к данной странице ( ${route.query.redirect}) необходимо
         авторизироваться !`;
-    setTimeout(() => (isLoginError.value = false), 2500);
+    setTimeout(() => (userAuthStore.isErrorMessageShown.value = false), 2500);
   }
 });
 </script>

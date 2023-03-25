@@ -2,9 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useUserAuthStore } from "./userAuth.js";
 
-import {
-  getUserCartProducts,
-} from "../api/products.js";
+import { getUserCartProducts } from "../api/products.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
   const userAuthStore = useUserAuthStore();
@@ -23,19 +21,15 @@ export const useUserCartStore = defineStore("userCart", () => {
 
   async function fetchUserCartProducts() {
     if (userAuthStore.currentUser.id) {
-      cartItems.value = [];
-      isFetchingLoading.value = true;
-
-      const userCartProducts = await getUserCartProducts(
-        userAuthStore.currentUser.id
-      );
-
-      if (userCartProducts.length) {
-        cartItems.value = userCartProducts;
-      } else if (userCartProducts.err) {
-        loadErrorMessage.value = userCartProducts.err;
-        console.log(userCartProducts.err);
+      try {
+        const products = await getUserCartProducts(
+          userAuthStore.currentUser.id
+        );
+        cartItems.value = products;
+      } catch (error) {
+        console.log(error);
         isCartProductsErr.value = true;
+        loadErrorMessage.value = error.message;
       }
       isFetchingLoading.value = false;
     }
@@ -69,8 +63,6 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-  
-
   function updateUserCart(product, method = "remove") {
     if (method.toLowerCase() === "add") {
       cartItems.value.push(product);
@@ -89,7 +81,6 @@ export const useUserCartStore = defineStore("userCart", () => {
     );
   });
 
-  
   return {
     fetchUserCartProducts,
     updateUserCart,

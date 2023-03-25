@@ -44,30 +44,25 @@ const loadErrorMessage = ref("Произошла ошибка при  загру
 watch(
   () => props.recommendedProducts,
   async () => {
-    productsByCategory.value = [];
     isLoading.value = true;
-
     let categoryToGet = "none";
+    try {
+      if (props.recommendedProducts) {
+        //Если категорий несколько выбираем случайную
+        if (props.recommendedProducts.split(",").length > 0) {
+          let splitted = props.recommendedProducts.split(",");
+          categoryToGet =
+            splitted[randomInteger(0, splitted.length - 1)].trim();
+        } else categoryToGet = props.recommendedProducts.trim();
+      }
 
-    if (props.recommendedProducts) {
-      //Если категорий несколько выбираем случайную
-      if (props.recommendedProducts.split(",").length > 0) {
-        let splitted = props.recommendedProducts.split(",");
-        categoryToGet = splitted[randomInteger(0, splitted.length - 1)].trim();
-      } else categoryToGet = props.recommendedProducts.trim();
-    }
-
-    const recommendedProducts = await getCategoryProducts(categoryToGet, 10);
-
-    if (recommendedProducts.err) {
+      const products = await getCategoryProducts(categoryToGet, 10);
+      productsByCategory.value = products;
+    } catch (error) {
       isErr.value = true;
-      loadErrorMessage.value = recommendedProducts.err;
+      loadErrorMessage.value = error.message;
       console.log(recommendedProducts.err);
     }
-    if (recommendedProducts.length) {
-      productsByCategory.value = recommendedProducts;
-    }
-
     isLoading.value = false;
   },
   { immediate: true }
