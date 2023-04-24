@@ -123,7 +123,6 @@ const searcProducts = (values) => {
 
 .search-form {
   color: white;
-
   // .search-form__header
   &__header {
     margin: 0px 0px rem(10) 0px;

@@ -233,6 +233,10 @@
   line-height: calc(20 / 16);
   border-radius: rem(10);
 
+  
+  @media(max-width: #{$tablet+px}){ 
+     padding: rem(8);         
+  }
   // .single-product__message_success
   &_success {
     background-color: coral;

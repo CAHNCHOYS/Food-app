@@ -127,7 +127,7 @@ const loginSubmit = async (values) => {
   await userAuthStore.loginUser(values);
 
   if (userAuthStore.checkIfUserLogged) {
-    await fetchUserCartProducts();
+    await fetchUserCartProducts(userAuthStore.currentUser.id);
     setTimeout(() => {
       router.push("/");
     }, 2000);
@@ -140,10 +140,10 @@ const loginSubmit = async (values) => {
 // перекидываем на эту старнциу и показываем сообщение
 watchEffect(() => {
   if (route.query.redirect) {
-    userAuthStore.isErrorMessageShown.value = true;
+    userAuthStore.isErrorMessageShown = true;
     userAuthStore.message = `Для доступа к данной странице ( ${route.query.redirect}) необходимо
         авторизироваться !`;
-    setTimeout(() => (userAuthStore.isErrorMessageShown.value = false), 2500);
+    setTimeout(() => (userAuthStore.isErrorMessageShown = false), 2500);
   }
 });
 </script>

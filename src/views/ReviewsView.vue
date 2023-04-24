@@ -1,6 +1,7 @@
 <template>
   <div class="reviews">
     <LoadingGif v-if="isFetchingLoading" />
+
     <div class="reviews__body" v-else>
       <Transition name="message">
         <div
@@ -105,27 +106,33 @@ import {
   Field as vField,
   ErrorMessage as FieldError,
 } from "vee-validate";
-import * as yup from "yup";
+import { object, string } from "yup";
 
 import ReviewItem from "../components/ReviewItem.vue";
 
 import { getAllReviews, addReview } from "../api/reviews.js";
 import { useUserAuthStore } from "../stores/userAuth";
-import {dateFormat} from "@/utils/date.js";
+import { dateFormat } from "@/utils/date.js";
 
 //Работа с формой --------------------------------------------------------------------------------------------------------
-const formSchema = yup.object({
-  message: yup
-    .string()
+const formSchema = object({
+  message: string()
     .min(10, "Сообщение должно иметь больше символов!")
     .required("Поле обязательное для ввода!"),
 });
+
 const isFormToggled = ref(false);
 const isInvalidSubmit = ref(false);
+
 const addSingleReviewSubmit = async (values, { resetForm }) => {
-  let currentDate = new Date().toLocaleString();
-  await addSingleReview({ ...values, currentDate });
-  resetForm();
+  if (userAuthStore.checkIfUserLogged) {
+    let currentDate = new Date().toLocaleString();
+    await addSingleReview({ ...values, currentDate });
+    resetForm();
+  } else {
+    isUserNotLogged.value = true;
+    setTimeout(() => (isUserNotLogged.value = false), 2500);
+  }
 };
 const invalidFormSubmit = () => {
   isInvalidSubmit.value = true;
@@ -147,41 +154,38 @@ const fetchErrorMessage = ref("Произошла ошибка");
 const addErrorMessage = ref("Произошла ошибка");
 
 const addSingleReview = async (review) => {
-  isReviewAdding.value = true;
-  if (userAuthStore.checkIfUserLogged) {
-    try {
-      review.user_id = userAuthStore.currentUser.id;
-      await addReview(review);
-      reviews.value.push({
-        text: review.message,
-        date: dateFormat(review.currentDate),
-        name: userAuthStore.currentUser.name,
-      });
+  try {
+    isReviewAdding.value = true;
+    review.user_id = userAuthStore.currentUser.id;
+    await addReview(review);
+    reviews.value.push({
+      text: review.message,
+      date: dateFormat(review.currentDate),
+      name: userAuthStore.currentUser.name,
+    });
 
-      isReviewAdded.value = true;
-      setTimeout(() => (isReviewAdded.value = false), 2500);
-    } catch (error) {
-      isAddError.value = true;
-      setTimeout(() => (isAddError.value = false), 2500);
-      addErrorMessage.value = error.message;
-    }
-  } else {
-    isUserNotLogged.value = true;
-    setTimeout(() => (isUserNotLogged.value = false), 2500);
+    isReviewAdded.value = true;
+    setTimeout(() => (isReviewAdded.value = false), 2500);
+  } catch (error) {
+    isAddError.value = true;
+    setTimeout(() => (isAddError.value = false), 2500);
+    addErrorMessage.value = error.message;
+  } finally {
+    isReviewAdding.value = false;
   }
-  isReviewAdding.value = false;
 };
 
 onMounted(async () => {
-  isFetchingLoading.value = true;
   try {
+    isFetchingLoading.value = true;
     const allReviews = await getAllReviews();
     reviews.value = allReviews;
   } catch (error) {
     isFetchError.value = true;
     fetchErrorMessage.value = error.message;
+  } finally {
+    isFetchingLoading.value = false;
   }
-  isFetchingLoading.value = false;
 });
 </script>
 

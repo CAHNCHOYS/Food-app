@@ -5,6 +5,7 @@ import { useUserAuthStore } from "../stores/userAuth";
 import { addToCart, deleteFromCart } from "../api/products";
 
 export const useProductsActions = () => {
+  
   const userCartStore = useUserCartStore();
   const userAuthStore = useUserAuthStore();
 
@@ -34,9 +35,7 @@ export const useProductsActions = () => {
   const addProductAction = async (product) => {
     if (userAuthStore.checkIfUserLogged) {
       isActionLoading.value = true;
-      if (!product.count) {
-        product.count = 1;
-      }
+      if (!product.count) product.count = 1;
 
       try {
         await addToCart({
@@ -53,11 +52,11 @@ export const useProductsActions = () => {
         isAddProductError.value = true;
         setTimeout(() => (isAddProductError.value = false), 2500);
       }
+      isActionLoading.value = false;
     } else {
       isNotLoggedUser.value = true;
       setTimeout(() => (isNotLoggedUser.value = false), 2500);
     }
-    isActionLoading.value = false;
   };
 
   return {

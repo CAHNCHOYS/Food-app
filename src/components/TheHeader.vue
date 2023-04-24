@@ -6,7 +6,6 @@
       </div>
 
       <router-link
-        @click="removeMobileMenu"
         to="/"
         class="header__logo"
         v-if="windowStore.getSize < 767.98"
@@ -40,47 +39,29 @@
       >
         <ul class="header__list">
           <li>
-            <router-link
-              @click="removeMobileMenu"
-              :to="{ name: 'reviews-page' }"
-              class="header__link"
+            <router-link :to="{ name: 'reviews-page' }" class="header__link"
               >Отзывы</router-link
             >
           </li>
 
-          <li @click="removeMobileMenu" v-if="!userAuthStore.checkIfUserLogged">
+          <li v-if="!userAuthStore.checkIfUserLogged">
             <router-link :to="{ name: 'login' }" class="header__link"
               >Войти</router-link
             >
           </li>
 
           <li v-if="userAuthStore.checkIfUserLogged">
-            <router-link
-              @click="removeMobileMenu"
-              :to="{ name: 'account' }"
-              class="header__link"
+            <router-link :to="{ name: 'account' }" class="header__link"
               >Личный кабинет</router-link
             >
           </li>
 
           <li>
-            <router-link
-              @click="removeMobileMenu"
-              :to="{ name: 'register' }"
-              class="header__link"
+            <router-link :to="{ name: 'register' }" class="header__link"
               >Регистрация</router-link
             >
           </li>
-          <li v-if="windowStore.getSize <= 767">
-            <router-link
-              @click="removeMobileMenu"
-              :to="{ name: 'cart-page' }"
-              class="header__cart"
-            >
-              <div class="header__cart-icon icon-cart"></div>
-              <div class="header__cart-text">Корзина</div>
-            </router-link>
-          </li>
+   
 
           <li class="search" v-if="windowStore.getSize > 767">
             <div
@@ -137,16 +118,6 @@ const toggleMobileMenu = ref(false);
 
 const isFormToggled = ref(false);
 
-const toggleBurger = () => {
-  document.body.classList.toggle("_isLocked");
-  toggleMobileMenu.value = !toggleMobileMenu.value;
-};
-
-const removeMobileMenu = () => {
-  document.body.classList.remove("_isLocked");
-  toggleMobileMenu.value = false;
-};
-
 onMounted(() => {
   window.addEventListener("click", (e) => {
     if (
@@ -177,9 +148,6 @@ onMounted(() => {
     z-index: 102;
     background-color: #f2f2f2;
     border-bottom: rem(1) solid #a4acad;
-    @media (max-width: #{$mobile+px}) {
-      border-bottom: unset;
-    }
   }
 
   @media (max-width: #{$container+px}) {
@@ -270,7 +238,7 @@ onMounted(() => {
     width: 100%;
     z-index: 10;
     // padding: rem(15);
-    background-color: rgba($color: #000000, $alpha: 0.75);
+    background-color: rgba($color: #000000, $alpha: 0.85);
 
     @media (max-width: #{$mobile+px}) {
       background-color: rgba($color: #111, $alpha: 1);

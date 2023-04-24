@@ -2,9 +2,7 @@ import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 export const useCategoiresFilter = (categoriesProducts, route) => {
-
   const router = useRouter();
-
 
   const moneySliderSettings = ref({
     min: 1,
@@ -36,8 +34,6 @@ export const useCategoiresFilter = (categoriesProducts, route) => {
   const updateSorting = (sort) => {
     currentSortOption.value = sort;
   };
-
- 
 
   //Фильтрация товаров по цене и сортировка по выбранному пользователем варианту
   const filteredProductsByValues = computed(() => {

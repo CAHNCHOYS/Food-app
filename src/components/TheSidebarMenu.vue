@@ -1,17 +1,17 @@
 <template>
   <div class="sidebar-menu">
-    <router-link to="/" class="sidebar-menu__logo">
+    <RouterLink to="/" class="sidebar-menu__logo">
       <img src="@/assets/Images/PizzaLogo.svg" alt="Site logo" />
       <div class="sidebar-menu__logo-text">Food App</div>
-    </router-link>
+    </RouterLink>
     <ul class="sidebar-menu__list">
       <li v-for="link in menuLinks" :key="link.category">
-        <router-link
+        <RouterLink
           :to="`/Categories/${link.category}`"
           class="sidebar-menu__link"
           :class="[link.icon, $route.query.searchProduct ? 'notAct' : '']"
           >{{ link.text }}
-        </router-link>
+        </RouterLink>
       </li>
     </ul>
   </div>

@@ -1,11 +1,8 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { useUserAuthStore } from "./userAuth.js";
-
 import { getUserCartProducts } from "../api/products.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
-  const userAuthStore = useUserAuthStore();
 
   const cartItems = ref([]);
   const isFetchingLoading = ref(false);
@@ -19,12 +16,10 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-  async function fetchUserCartProducts() {
-    if (userAuthStore.currentUser.id) {
+  async function fetchUserCartProducts(userId) {
+    if (userId) {
       try {
-        const products = await getUserCartProducts(
-          userAuthStore.currentUser.id
-        );
+        const products = await getUserCartProducts(userId);
         cartItems.value = products;
       } catch (error) {
         console.log(error);
@@ -35,7 +30,7 @@ export const useUserCartStore = defineStore("userCart", () => {
     }
   }
 
-  async function commitOrder() {
+  async function commitOrder(userId) {
     try {
       const requests = cartItems.value.map((product) =>
         fetch("https://sushi-backend-henna.vercel.app/api/order", {
@@ -45,7 +40,7 @@ export const useUserCartStore = defineStore("userCart", () => {
           },
           body: JSON.stringify({
             product_id: product.product_id,
-            user_id: userAuthStore.currentUser.id,
+            user_id: userId,
             count: product.count,
           }),
         })

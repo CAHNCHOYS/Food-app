@@ -12,7 +12,7 @@
           <div class="product__picture-col">
             <div class="product__picture _ibg">
               <img
-                :src="`https://sushi-backend-henna.vercel.app/Products/${pageProduct.image}`"
+                :src="`${API_LINK}/Products/${pageProduct.image}`"
                 :alt="pageProduct.name"
               />
             </div>
@@ -140,6 +140,8 @@ const props = defineProps({
   name: String,
 });
 
+const API_LINK = import.meta.env.VITE_API_URL;
+
 const pageProduct = ref(null);
 const isProductLoading = ref(false);
 const isFetchError = ref(false);
@@ -154,12 +156,11 @@ watch(
     try {
       const product = await getSingleProduct(props.name, props.id);
       console.log(product);
-      pageProduct.value = product; 
-      if(product) product.count = 1;
+      pageProduct.value = product;
+      if (product) product.count = 1;
     } catch (error) {
       errorMessage.value = error.message;
       isFetchError.value = true;
-   
     }
     isProductLoading.value = false;
   },

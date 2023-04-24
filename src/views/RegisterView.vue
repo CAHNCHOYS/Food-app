@@ -115,7 +115,7 @@
               </div>
               <div class="action-form__element">
                 <button
-                  v-show="!isLoading"
+                  v-show="!isRegisterLoading"
                   class="action-form__btn"
                   type="submit"
                   :class="{ err: isInvalidFormSubmit }"
@@ -124,13 +124,13 @@
                 </button>
               </div>
 
-              <LoadingGif v-if="isLoading" />
+              <LoadingGif v-if="isRegisterLoading" />
             </div>
           </vForm>
 
           <Transition name="login-btn">
             <div class="action-form__login-btn" v-if="userCanGoToLogin">
-              <RouterLink class="action-form__btn" to="/Login"
+              <RouterLink  to="/login" class="action-form__btn"
                 >Перейти к авторизации</RouterLink
               >
             </div>
@@ -164,7 +164,7 @@ const {
 } = useFormActions();
 
 const userAuthStore = useUserAuthStore();
-const isLoading = ref(false);
+const isRegisterLoading = ref(false);
 
 const userCanGoToLogin = ref(false);
 
@@ -175,7 +175,7 @@ const updateCity = (city) => {
 };
 
 const registerSubmit = async (values, { resetForm }) => {
-  isLoading.value = true;
+  isRegisterLoading.value = true;
   let userData = {
     ...values,
     city: selectedCity.value,
@@ -185,7 +185,7 @@ const registerSubmit = async (values, { resetForm }) => {
     resetForm();
     userCanGoToLogin.value = true;
   }
-  isLoading.value = false;
+  isRegisterLoading.value = false;
 };
 </script>
 

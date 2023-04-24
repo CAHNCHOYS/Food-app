@@ -1,5 +1,5 @@
 <template>
-  <SiteLoad v-if="isSiteLoading" /> 
+  <SiteLoad v-if="isSiteLoading" />
   <component :is="getLayout" v-else>
     <router-view v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
@@ -10,17 +10,18 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref, computed } from "vue";
+import { useRoute } from "vue-router";
+
+import MainLayout from "@/Layouts/MainLayout.vue";
+import LoginRegisterLayout from "@/Layouts/LoginRegisterLayout.vue";
+import CheckoutLayout from "@/Layouts/CheckoutLayout.vue";
 
 import { useWindowSizeStore } from "./stores/windowSize";
 import { useUserAuthStore } from "./stores/userAuth.js";
 import { useUserCartStore } from "./stores/userCart";
 
 import SiteLoad from "./components/SiteLoad.vue";
-
-import { useRoute } from "vue-router";
-import { useLayouts } from "@/Composables/useLayouts.js";
-
 
 const isSiteLoading = ref(true);
 
@@ -29,31 +30,38 @@ const userCartStore = useUserCartStore();
 
 //Смена layout в зависимости от routa
 const route = useRoute();
-const { getLayout } = useLayouts(route);
+const layouts = {
+  Main: MainLayout,
+  Login: LoginRegisterLayout,
+  Checkout: CheckoutLayout,
+};
 
+const getLayout = computed(() => {
+  console.log(route.meta);
+  return layouts[route.meta.layout || "Main"];
+});
+//-------------------------------------
 
 const windowSizeStore = useWindowSizeStore();
 const checkSize = () => {
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
 };
-onMounted(async () => {
 
+onMounted(async () => {
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
   window.addEventListener("resize", checkSize);
 
   await userAuthStore.getUser();
   //Получение товаров в корзине
   if (userAuthStore.checkIfUserLogged) {
-    await userCartStore.fetchUserCartProducts();
+    await userCartStore.fetchUserCartProducts(userAuthStore.currentUser.id);
   }
- isSiteLoading.value = false;
+  isSiteLoading.value = false;
 });
-
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkSize);
 });
-
 </script>
 
 <style lang="scss">
@@ -65,8 +73,6 @@ onUnmounted(() => {
 @import "@/assets/scss/fonts.scss";
 
 @import "@/assets/scss/Ui.scss";
-
-
 
 html {
   scrollbar-width: thin;
@@ -106,8 +112,6 @@ body {
 }
 
 .container {
- 
-
   //Если нет
   max-width: 1200px;
   margin: 0px auto;
@@ -124,8 +128,4 @@ body {
     overflow: hidden;
   }
 }
-
-
-
-
 </style>

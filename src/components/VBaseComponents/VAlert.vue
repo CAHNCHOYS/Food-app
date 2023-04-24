@@ -86,6 +86,10 @@ const messageColorType = computed(() => ({
     font-size: rem(20);
     line-height: 1.3;
 
+    @media(max-width: #{$container+px}){ 
+      padding: rem(10);
+    }
+
     &.info {
       background-color: rgb(33, 168, 252);
       color: white;

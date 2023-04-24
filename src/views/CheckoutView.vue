@@ -346,13 +346,13 @@ import { Form as vForm, Field as vField, ErrorMessage } from "vee-validate";
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useUserCartStore } from "../stores/userCart";
+import { useUserAuthStore } from "../stores/userAuth";
 import { useWindowSizeStore } from "../stores/windowSize";
 import CheckoutDetails from "../components/UserCart/CheckoutDetails.vue";
 
 const userCartStore = useUserCartStore();
 const windowSizeStore = useWindowSizeStore();
-
-
+const userAuthStore = useUserAuthStore();
 //Схемы для валидации форм
 const {
   orderSchemaCashByCourier,
@@ -418,14 +418,14 @@ const isFormSubmitting = ref(false);
 const isSuccessfulOrder = ref(false);
 
 const commitOrder = async (values) => {
-  console.log(values);
   isFormSubmitting.value = true;
-
   if (values.promo) {
     userCartStore.updateUserPromo(values.promo);
   }
 
-  const commitOrderResult = await userCartStore.commitOrder();
+  const commitOrderResult = await userCartStore.commitOrder(
+    userAuthStore.currentUser.id
+  );
 
   if (commitOrderResult.length) {
     isSuccessfulOrder.value = true;
@@ -439,9 +439,6 @@ const commitOrder = async (values) => {
 };
 
 const invalidSubmit = ({ values, errors, results }) => {
-  console.log(values); // current form values
-  console.log(errors); // a map of field names and their first error message
-  console.log(results); // a detailed map of field names and their validation results
   isInvalidSubmit.value = true;
   setTimeout(() => (isInvalidSubmit.value = false), 500);
 };

@@ -1,6 +1,6 @@
 <template>
   <div class="user-cart">
-    <LoadingGif v-if="userCartStore.isFetchingLoading"></LoadingGif>
+    <LoadingGif v-if="userCartStore.isFetchingLoading" />
     <div class="user-cart__body" v-if="userAuthStore.checkIfUserLogged">
       <VErrorMessage
         v-if="userCartStore.isCartProductsErr"
