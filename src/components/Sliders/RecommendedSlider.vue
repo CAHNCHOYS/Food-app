@@ -27,7 +27,7 @@
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { ref, watch } from "vue";
 import { Pagination } from "swiper";
-import { getCategoryProducts } from "@/api/products";
+import ProductService from "@/api/products";
 
 const props = defineProps({
   recommendedProducts: {
@@ -56,7 +56,10 @@ watch(
         } else categoryToGet = props.recommendedProducts.trim();
       }
 
-      const products = await getCategoryProducts(categoryToGet, 10);
+      const products = await ProductService.getCategoryProducts(
+        categoryToGet,
+        10
+      );
       productsByCategory.value = products;
     } catch (error) {
       isErr.value = true;

@@ -86,7 +86,7 @@ import Slider from "@vueform/slider";
 import { VueAwesomePaginate } from "vue-awesome-paginate";
 import "vue-awesome-paginate/dist/style.css";
 
-import { searchProducts, getCategoryProducts } from "../api/products";
+import ProductService from "../api/products.js";
 
 const props = defineProps({
   category: {
@@ -130,7 +130,7 @@ watch(
       let products = [];
       //Если пришли с формы поиска
       if (route.query.searchCategories || route.query.searchProduct) {
-        products = await searchProducts(
+        products = await ProductService.getSearchedProducts(
           route.query.searchCategories,
           route.query.searchProduct
         );
@@ -138,7 +138,10 @@ watch(
 
         //Если пришли с меню категорий
       } else {
-        products = await getCategoryProducts(props.category, 999);
+        products = await ProductService.getCategoryProducts(
+          props.category,
+          999
+        );
         currentCategoryIcon.value = categoryIcons[props.category];
       }
       categoryProducts.value = products;
@@ -163,7 +166,7 @@ const {
   updateSorting,
 } = useCategoiresFilter(categoryProducts, route);
 
-//При переходе на новую страницу скролим вверх
+//При переходе на новую страницу товаров скролим вверх
 watch(currentPage, () => {
   const header = document.querySelector(".category-products__header");
   header.scrollIntoView({

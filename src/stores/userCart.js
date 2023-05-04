@@ -1,11 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { getUserCartProducts } from "../api/products.js";
+import ProductService from "../api/products.js";
 
 export const useUserCartStore = defineStore("userCart", () => {
-
   const cartItems = ref([]);
-  const isFetchingLoading = ref(false);
+  const isProductsLoading = ref(false);
   const isCartProductsErr = ref(false);
   const loadErrorMessage = ref("Произошла ошибка при загрузке товаров корзины");
 
@@ -19,14 +18,15 @@ export const useUserCartStore = defineStore("userCart", () => {
   async function fetchUserCartProducts(userId) {
     if (userId) {
       try {
-        const products = await getUserCartProducts(userId);
+        const products = await ProductService.getUserCartProducts(userId);
+        console.log(products);
         cartItems.value = products;
       } catch (error) {
         console.log(error);
         isCartProductsErr.value = true;
         loadErrorMessage.value = error.message;
       }
-      isFetchingLoading.value = false;
+      isProductsLoading.value = false;
     }
   }
 
@@ -46,10 +46,8 @@ export const useUserCartStore = defineStore("userCart", () => {
         })
       );
       let results = await Promise.all(requests);
-      console.log(results);
 
       let resultesJson = await Promise.all(results.map((res) => res.json()));
-      console.log(resultesJson);
 
       return resultesJson;
     } catch (err) {
@@ -83,7 +81,7 @@ export const useUserCartStore = defineStore("userCart", () => {
     commitOrder,
 
     cartItems,
-    isFetchingLoading,
+    isProductsLoading,
     getAllProductsPrice,
     isCartProductsErr,
     isPromoActive,

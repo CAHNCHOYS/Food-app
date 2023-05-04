@@ -1,5 +1,5 @@
 <template>
-  <SiteLoad v-if="isSiteLoading" />
+  <SiteLoad v-if="userAuthStore.isUserDataLoading" />
   <component :is="getLayout" v-else>
     <router-view v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, computed } from "vue";
+import { onMounted, onUnmounted, computed } from "vue";
 import { useRoute } from "vue-router";
 
 import MainLayout from "@/Layouts/MainLayout.vue";
@@ -19,14 +19,10 @@ import CheckoutLayout from "@/Layouts/CheckoutLayout.vue";
 
 import { useWindowSizeStore } from "./stores/windowSize";
 import { useUserAuthStore } from "./stores/userAuth.js";
-import { useUserCartStore } from "./stores/userCart";
 
 import SiteLoad from "./components/SiteLoad.vue";
 
-const isSiteLoading = ref(true);
-
 const userAuthStore = useUserAuthStore();
-const userCartStore = useUserCartStore();
 
 //Смена layout в зависимости от routa
 const route = useRoute();
@@ -48,15 +44,10 @@ const checkSize = () => {
 };
 
 onMounted(async () => {
+  console.log("route", route.name, route.fullPath);
+  console.log("programm start");
   windowSizeStore.updateWindowSize(document.documentElement.clientWidth);
   window.addEventListener("resize", checkSize);
-
-  await userAuthStore.getUser();
-  //Получение товаров в корзине
-  if (userAuthStore.checkIfUserLogged) {
-    await userCartStore.fetchUserCartProducts(userAuthStore.currentUser.id);
-  }
-  isSiteLoading.value = false;
 });
 
 onUnmounted(() => {

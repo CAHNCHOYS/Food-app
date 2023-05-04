@@ -73,7 +73,7 @@
               <div class="action-form__btns">
                 <button
                   class="action-form__btn"
-                  v-if="!isLoading"
+                  v-if="!isLoginLoading"
                   type="submit"
                   :class="{ err: isInvalidFormSubmit }"
                 >
@@ -83,7 +83,7 @@
             </div>
           </vForm>
 
-          <LoadingGif v-if="isLoading" />
+          <LoadingGif v-if="isLoginLoading" />
         </div>
         <RouterLink class="home-button" to="/">На главную</RouterLink>
       </div>
@@ -107,8 +107,6 @@ import { useFormSchemas } from "../Composables/useFormSchemas";
 import { useUserAuthStore } from "../stores/userAuth.js";
 import { useUserCartStore } from "../stores/userCart";
 
-const { fetchUserCartProducts } = useUserCartStore();
-
 const router = useRouter();
 const route = useRoute();
 
@@ -117,23 +115,25 @@ const { isInvalidFormSubmit, toggleBlur, toggleFocus, invalidSubmit } =
   useFormActions();
 
 const userAuthStore = useUserAuthStore();
-const isLoading = ref(false);
+const { fetchUserCartProducts } = useUserCartStore();
+
+const isLoginLoading = ref(false);
 
 const fieldType = ref("password");
 
 const loginSubmit = async (values) => {
-  isLoading.value = true;
+  isLoginLoading.value = true;
 
   await userAuthStore.loginUser(values);
 
-  if (userAuthStore.checkIfUserLogged) {
-    await fetchUserCartProducts(userAuthStore.currentUser.id);
+  if (userAuthStore.isUserLoggedIn) {
+    fetchUserCartProducts(userAuthStore.currentUser.id);
     setTimeout(() => {
       router.push("/");
     }, 2000);
   }
 
-  isLoading.value = false;
+  isLoginLoading.value = false;
 };
 
 //Если пользователь щашел на страницу где нужна авторизация не авторизировавшись, то

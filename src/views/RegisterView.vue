@@ -174,10 +174,10 @@ const updateCity = (city) => {
   selectedCity.value = city;
 };
 
-const registerSubmit = async (values, { resetForm }) => {
+const registerSubmit = async (registerPayload, { resetForm }) => {
   isRegisterLoading.value = true;
   let userData = {
-    ...values,
+    ...registerPayload,
     city: selectedCity.value,
   };
 

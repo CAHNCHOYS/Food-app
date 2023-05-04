@@ -12,6 +12,7 @@ import HomeCategories from "../components/Home/HomeCategories.vue";
 import HomeSlider from "../components/Home/HomeSlider.vue";
 import HomeTabsSliders from "../components/Home/HomeTabsSliders.vue";
 import HomeInfo from "../components/Home/HomeInfo.vue";
+
 </script>
 
 <style lang="scss">

@@ -8,7 +8,7 @@
             <div class="bottom-menu__item-text">Корзина</div></router-link
           >
         </li>
-        <li v-if="userAuthStore.checkIfUserLogged">
+        <li v-if="userAuthStore.isUserLoggedIn">
           <router-link :to="{ name: 'account' }" class="bottom-menu__link">
             <img src="@/assets/Images/users/account-svgrepo-com.svg" alt="" />
             <div class="bottom-menu__item-text">
@@ -16,13 +16,13 @@
             </div></router-link
           >
         </li>
-        <li v-if="!userAuthStore.checkIfUserLogged">
+        <li v-if="!userAuthStore.isUserLoggedIn">
           <router-link :to="{ name: 'login' }" class="bottom-menu__link">
             <img src="@/assets/Images/users/login-svgrepo-com.svg" alt="" />
             <div class="bottom-menu__item-text">Войти</div></router-link
           >
         </li>
-        <li v-if="!userAuthStore.checkIfUserLogged">
+        <li v-if="!userAuthStore.isUserLoggedIn">
           <router-link :to="{ name: 'register' }" class="bottom-menu__link">
             <img
               src="@/assets/Images/users/sign-in-double-arrow-2-svgrepo-com.svg"

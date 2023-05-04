@@ -1,7 +1,7 @@
 <template>
   <div class="user-cart">
-    <LoadingGif v-if="userCartStore.isFetchingLoading" />
-    <div class="user-cart__body" v-if="userAuthStore.checkIfUserLogged">
+    <LoadingGif v-if="userCartStore.isProductsLoading" />
+    <div class="user-cart__body" v-if="userAuthStore.isUserLoggedIn">
       <VErrorMessage
         v-if="userCartStore.isCartProductsErr"
         :err-message="userCartStore.loadErrorMessage"
@@ -62,10 +62,10 @@
 </template>
 
 <script setup>
-import UserCartProduct from "./UserCartProduct.vue";
+import { ref, watch } from "vue";
 import { useUserAuthStore } from "@/stores/userAuth";
 import { useUserCartStore } from "@/stores/userCart";
-import { ref, watch } from "vue";
+import UserCartProduct from "./UserCartProduct.vue";
 
 const props = defineProps({
   isCheckoutPage: {
@@ -88,6 +88,8 @@ watch(
     }
   }
 );
+
+
 </script>
 
 <style lang="scss" scoped>

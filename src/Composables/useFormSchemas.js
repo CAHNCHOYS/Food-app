@@ -1,8 +1,6 @@
 import * as yup from "yup";
 
 export const useFormSchemas = () => {
- 
-
   const userEditSchema = yup.object({
     email: yup
       .string()
@@ -42,19 +40,16 @@ export const useFormSchemas = () => {
       .oneOf([yup.ref("password"), null], "Пароли должны совпадать"),
   });
 
- 
-
   const loginSchema = yup.object({
     email: yup
       .string()
       .required("Поле обязательное для ввода!")
-      .email("Введите корректный email"),
+      .email("Введите правильный email"),
     password: yup
       .string()
       .required("Поле обязательное для ввода!")
       .min(4, "Поле должно иметь 4 символов минимум"),
   });
-
 
   const searchSchema = yup.object({
     search: yup
@@ -66,7 +61,6 @@ export const useFormSchemas = () => {
       .required("Выберете хотя бы одну категорию")
       .min(1, "Выберете хотя бы одну категорию"),
   });
-  
 
   const orderSchemaCashByCourier = yup.object({
     phone: yup

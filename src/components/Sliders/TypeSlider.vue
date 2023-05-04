@@ -30,7 +30,7 @@ import { onMounted, ref } from "vue";
 import { Pagination } from "swiper";
 
 //-------------------------------------------------------------------
-import { getTypeProducts } from "@/api/products";
+import ProductService from "@/api/products.js";
 
 const props = defineProps({
   productType: {
@@ -49,11 +49,10 @@ onMounted(async () => {
   isLoading.value = true;
 
   try {
-    const products = await getTypeProducts(props.productType);
+    const products = await ProductService.getTypeProducts(props.productType);
     productsByType.value = products;
   } catch (error) {
     loadErrorMessage.value = error.message;
-    console.log(getProducts.err);
     isLoadErr.value = true;
   }
   isLoading.value = false;

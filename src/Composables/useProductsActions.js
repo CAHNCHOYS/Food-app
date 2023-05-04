@@ -2,10 +2,9 @@ import { ref } from "vue";
 
 import { useUserCartStore } from "../stores/userCart";
 import { useUserAuthStore } from "../stores/userAuth";
-import { addToCart, deleteFromCart } from "../api/products";
+import ProductService from "../api/products.js";
 
 export const useProductsActions = () => {
-  
   const userCartStore = useUserCartStore();
   const userAuthStore = useUserAuthStore();
 
@@ -19,7 +18,7 @@ export const useProductsActions = () => {
   const deleteProductAction = async (product) => {
     isActionLoading.value = true;
     try {
-      await deleteFromCart({
+      await ProductService.deleteProductFromCart({
         product_id: +product.product_id,
         user_id: +userAuthStore.currentUser.id,
       });
@@ -33,12 +32,12 @@ export const useProductsActions = () => {
   };
 
   const addProductAction = async (product) => {
-    if (userAuthStore.checkIfUserLogged) {
+    if (userAuthStore.isUserLoggedIn) {
       isActionLoading.value = true;
       if (!product.count) product.count = 1;
 
       try {
-        await addToCart({
+        await ProductService.addProductToCart({
           product_id: product.product_id,
           user_id: userAuthStore.currentUser.id,
           count: product.count,

@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import { useUserAuthStore } from "../stores/userAuth";
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -31,7 +32,8 @@ const router = createRouter({
       },
       //Если уже авторизирован
       beforeEnter(to, from) {
-        if (localStorage.getItem("token")) {
+        const userAuthStore = useUserAuthStore();
+        if (userAuthStore.isUserLoggedIn) {
           return {
             name: "home",
           };
@@ -47,7 +49,6 @@ const router = createRouter({
         layout: "Main",
         isLoginRequired: true,
       },
-      
     },
     {
       path: "/cart",
@@ -59,7 +60,6 @@ const router = createRouter({
         layout: "Main",
         isLoginRequired: true,
       },
-
     },
 
     {
@@ -101,8 +101,6 @@ const router = createRouter({
         layout: "Checkout",
         isLoginRequired: true,
       },
-
-    
     },
 
     //404 page
@@ -119,8 +117,12 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {},
 });
 
-router.beforeEach((to, from) => {
-  if (to.meta.isLoginRequired && !localStorage.getItem("token")) {
+router.beforeEach(async (to, from) => {
+  const userAuthStore = useUserAuthStore();
+  if (!from.name) {
+    await userAuthStore.getUser();
+  }
+  if (to.meta.isLoginRequired && !userAuthStore.isUserLoggedIn) {
     return {
       name: "login",
       query: {

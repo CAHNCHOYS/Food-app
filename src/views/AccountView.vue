@@ -65,7 +65,7 @@
 
             <div class="edit-form__element" v-show="isUserEditing">
               <button
-                :disabled="isLoading"
+                :disabled="isUpdateLoading"
                 type="submit"
                 class="user-account__btn user-account__btn_update"
                 v-show="isUserEditing"
@@ -80,7 +80,7 @@
               </Transition>
             </div>
 
-            <LoadingGif v-if="isLoading" class="edit-form__loading" />
+            <LoadingGif v-if="isUpdateLoading" class="edit-form__loading" />
 
             <VErrorMessage
               :error-message="`Ошибка при обновлении информации`"
@@ -123,25 +123,30 @@ import {
 import { useFormSchemas } from "../Composables/useFormSchemas";
 
 import { useUserAuthStore } from "../stores/userAuth";
-import { updateInfo } from "../api/users";
+import AuthService from "../api/auth.js";
 
 const { userEditSchema } = useFormSchemas();
 const router = useRouter();
 
 const userAuthStore = useUserAuthStore();
+
 const isUserEditing = ref(false);
-const isLoading = ref(false);
+const isUpdateLoading = ref(false);
 const isUpdateError = ref(false);
 const isUpdateSuccess = ref(false);
 
 const updateErrorMessage = ref("");
 
-const updateAccountSubmit = async (values) => {
-  isLoading.value = true;
+const updateAccountSubmit = async (updatePayload) => {
+  isUpdateLoading.value = true;
   try {
-    values.id = userAuthStore.currentUser.id;
-    await updateInfo(values);
-    await userAuthStore.getUser();
+    updatePayload.id = userAuthStore.currentUser.id;
+    await AuthService.updateInfo(updatePayload);
+    const user = await AuthService.getUserByToken(
+      localStorage.getItem("token")
+    );
+    userAuthStore.currentUser = user;
+
     isUpdateSuccess.value = true;
 
     setTimeout(() => {
@@ -153,7 +158,7 @@ const updateAccountSubmit = async (values) => {
     isUpdateError.value = true;
     setTimeout(() => (isUpdateError.value = false), 5000);
   }
-  isLoading.value = false;
+  isUpdateLoading.value = false;
 };
 
 const logOut = () => {

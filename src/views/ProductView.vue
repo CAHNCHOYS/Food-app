@@ -132,7 +132,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useProductsActions } from "../Composables/useProductsActions";
-import { getSingleProduct } from "../api/products.js";
+import ProductService from "../api/products.js";
 import RecommendedSlider from "../components/Sliders/RecommendedSlider.vue";
 
 const props = defineProps({
@@ -152,10 +152,11 @@ watch(
   async () => {
     isProductLoading.value = true;
     pageProduct.value = null;
-
     try {
-      const product = await getSingleProduct(props.name, props.id);
-      console.log(product);
+      const product = await ProductService.getSingleProduct(
+        props.name,
+        props.id
+      );
       pageProduct.value = product;
       if (product) product.count = 1;
     } catch (error) {

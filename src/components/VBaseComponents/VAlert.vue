@@ -38,6 +38,7 @@ const messageColorType = computed(() => ({
 
 .message {
   z-index: 200;
+  max-width: rem(420);
 
   &.fixed {
     width: 420px;
@@ -86,7 +87,7 @@ const messageColorType = computed(() => ({
     font-size: rem(20);
     line-height: 1.3;
 
-    @media(max-width: #{$container+px}){ 
+    @media (max-width: #{$container+px}) {
       padding: rem(10);
     }
 

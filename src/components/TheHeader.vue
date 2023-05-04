@@ -44,13 +44,13 @@
             >
           </li>
 
-          <li v-if="!userAuthStore.checkIfUserLogged">
+          <li v-if="!userAuthStore.isUserLoggedIn">
             <router-link :to="{ name: 'login' }" class="header__link"
               >Войти</router-link
             >
           </li>
 
-          <li v-if="userAuthStore.checkIfUserLogged">
+          <li v-if="userAuthStore.isUserLoggedIn">
             <router-link :to="{ name: 'account' }" class="header__link"
               >Личный кабинет</router-link
             >

@@ -1,20 +1,21 @@
 import { defineStore } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
+import { useUserCartStore } from "./userCart.js";
 
-import { getUserByToken, login, register } from "../api/users.js";
+import AuthService from "../api/auth.js";
 
 export const useUserAuthStore = defineStore("userAuth", () => {
   const currentUser = ref(null);
   const isUserLoggedIn = ref(false);
-  const checkIfUserLogged = computed(() => isUserLoggedIn.value);
 
   const isSuccessMessageShown = ref(false);
   const isErrorMessageShown = ref(false);
   const message = ref("");
+  const isUserDataLoading = ref(false);
 
   async function loginUser(loginPayload) {
     try {
-      let loginResult = await login(loginPayload);
+      let loginResult = await AuthService.login(loginPayload);
       isSuccessMessageShown.value = true;
       addTokenToStorage(loginResult);
       message.value =
@@ -29,7 +30,7 @@ export const useUserAuthStore = defineStore("userAuth", () => {
 
   async function registerUser(registerPayload) {
     try {
-      await register(registerPayload);
+      await AuthService.register(registerPayload);
       isSuccessMessageShown.value = true;
 
       message.value =
@@ -45,11 +46,8 @@ export const useUserAuthStore = defineStore("userAuth", () => {
   }
 
   function addTokenToStorage({ token, user }) {
-    console.log("tokenn", token);
-    console.log("user", user);
     currentUser.value = user;
     localStorage.setItem("token", token);
-
     isUserLoggedIn.value = true;
   }
 
@@ -60,15 +58,20 @@ export const useUserAuthStore = defineStore("userAuth", () => {
   }
 
   async function getUser() {
-    if (localStorage.getItem("token")) {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    if (token) {
       try {
-        const user = await getUserByToken(token);
+        isUserDataLoading.value = true;
+        const user = await AuthService.getUserByToken(token);
         currentUser.value = user;
         isUserLoggedIn.value = true;
+        const { fetchUserCartProducts } = useUserCartStore();
+        await fetchUserCartProducts(currentUser.value.id);
       } catch (error) {
         console.log(error);
         logOutUser();
+      } finally {
+        isUserDataLoading.value = false;
       }
     }
   }
@@ -80,10 +83,11 @@ export const useUserAuthStore = defineStore("userAuth", () => {
     loginUser,
     registerUser,
 
-    checkIfUserLogged,
     isSuccessMessageShown,
+    isUserLoggedIn,
     isErrorMessageShown,
     message,
+    isUserDataLoading,
     currentUser,
   };
 });

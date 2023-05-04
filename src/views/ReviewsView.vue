@@ -1,6 +1,6 @@
 <template>
   <div class="reviews">
-    <LoadingGif v-if="isFetchingLoading" />
+    <LoadingGif v-if="isReviewsLoading" />
 
     <div class="reviews__body" v-else>
       <Transition name="message">
@@ -11,16 +11,6 @@
           Отзыв добавлен!
         </div>
       </Transition>
-
-      <Transition name="message">
-        <div
-          class="reviews__message reviews__message_not-logged"
-          v-if="isUserNotLogged"
-        >
-          Для добавления отзыва требуется войти в аккаунт!
-        </div>
-      </Transition>
-
       <div class="reviews__header" v-if="!isFetchError">
         <div class="reviews__title">Отзывы</div>
         <div class="reviews__button">
@@ -39,7 +29,7 @@
           <LoadingGif class="reviews__loading-add" v-if="isReviewAdding" />
           <vForm
             @invalid-submit="invalidFormSubmit"
-            @submit="addSingleReviewSubmit"
+            @submit="addReviewSubmit"
             class="review-form__form"
             :validation-schema="formSchema"
             :class="{ opacity: isReviewAdding }"
@@ -65,6 +55,12 @@
                 >
                   Отправить отзыв
                 </button>
+                <div
+                  class="review-form__not-logged"
+                  v-if="!userAuthStore.isUserLoggedIn"
+                >
+                  Для добавления отзыва необходимо войти в аккаунт
+                </div>
               </div>
             </div>
           </vForm>
@@ -109,12 +105,12 @@ import {
 import { object, string } from "yup";
 
 import ReviewItem from "../components/ReviewItem.vue";
+import ReviewService from "../api/reviews.js";
 
-import { getAllReviews, addReview } from "../api/reviews.js";
 import { useUserAuthStore } from "../stores/userAuth";
 import { dateFormat } from "@/utils/date.js";
 
-//Работа с формой --------------------------------------------------------------------------------------------------------
+//Работа с формой --------------------------------------------------------------------------------
 const formSchema = object({
   message: string()
     .min(10, "Сообщение должно иметь больше символов!")
@@ -124,28 +120,24 @@ const formSchema = object({
 const isFormToggled = ref(false);
 const isInvalidSubmit = ref(false);
 
-const addSingleReviewSubmit = async (values, { resetForm }) => {
-  if (userAuthStore.checkIfUserLogged) {
+const addReviewSubmit = async (review, { resetForm }) => {
+  if (userAuthStore.isUserLoggedIn) {
     let currentDate = new Date().toLocaleString();
-    await addSingleReview({ ...values, currentDate });
+    await addSingleReview({ ...review, currentDate });
     resetForm();
-  } else {
-    isUserNotLogged.value = true;
-    setTimeout(() => (isUserNotLogged.value = false), 2500);
   }
 };
 const invalidFormSubmit = () => {
   isInvalidSubmit.value = true;
   setTimeout(() => (isInvalidSubmit.value = false), 500);
 };
-//-------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
 const userAuthStore = useUserAuthStore();
 const reviews = ref([]);
 
-const isFetchingLoading = ref(false);
+const isReviewsLoading = ref(false);
 const isFetchError = ref(false);
-const isUserNotLogged = ref(false);
 const isReviewAdded = ref(false);
 const isAddError = ref(false);
 const isReviewAdding = ref(false);
@@ -157,7 +149,7 @@ const addSingleReview = async (review) => {
   try {
     isReviewAdding.value = true;
     review.user_id = userAuthStore.currentUser.id;
-    await addReview(review);
+    await ReviewService.addReview(review);
     reviews.value.push({
       text: review.message,
       date: dateFormat(review.currentDate),
@@ -177,14 +169,14 @@ const addSingleReview = async (review) => {
 
 onMounted(async () => {
   try {
-    isFetchingLoading.value = true;
-    const allReviews = await getAllReviews();
+    isReviewsLoading.value = true;
+    const allReviews = await ReviewService.getAllReviews();
     reviews.value = allReviews;
   } catch (error) {
     isFetchError.value = true;
     fetchErrorMessage.value = error.message;
   } finally {
-    isFetchingLoading.value = false;
+    isReviewsLoading.value = false;
   }
 });
 </script>
@@ -414,6 +406,13 @@ onMounted(async () => {
   &__error-msg {
     margin: rem(5) 0px 0px 0px;
     font-size: rem(20);
+    color: crimson;
+  }
+
+  // .review-form__not-logged
+
+  &__not-logged {
+    font-size: rem(18);
     color: crimson;
   }
 }

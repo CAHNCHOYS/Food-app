@@ -25,7 +25,7 @@
 
   &__content {
     flex: 1 1 auto;
-    padding: rem(80) rem(65);
+    padding: rem(70) rem(55);
     max-width: rem(500);
     background-color: white;
     border-radius: rem(30);
@@ -59,7 +59,7 @@
   &__elements {
     display: flex;
     flex-direction: column;
-    row-gap: 15px;
+    row-gap: 20px;
   }
 
   // .action-form__input-body
